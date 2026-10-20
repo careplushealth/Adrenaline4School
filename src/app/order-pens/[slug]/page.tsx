@@ -77,46 +77,40 @@ export default function ProductDetailPage() {
     : 'jext-150';
 
   return (
-    <div className="min-h-screen bg-ivory text-forest-900 py-10 font-sans">
+    <div className="min-h-screen bg-white text-[#0c2340] py-10 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs font-medium text-stone-500 mb-8">
-          <Link href="/" className="hover:text-forest-900 transition-colors">
+        <nav className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-8">
+          <Link href="/" className="hover:text-[#0c2340] transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href="/order-pens" className="hover:text-forest-900 transition-colors">
+          <Link href="/order-pens" className="hover:text-[#0c2340] transition-colors">
             Emergency Auto-Injectors
           </Link>
           <span>/</span>
-          <span className="text-forest-950 font-semibold">{product.name}</span>
+          <span className="text-[#0c2340] font-semibold">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Canvas: Precision Vector Medical Device */}
-          <div className="lg:col-span-5 bg-white/90 rounded-3xl border border-stone-200/80 shadow-[0_12px_36px_-12px_rgba(22,35,26,0.06)] p-10 flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="lg:col-span-5 bg-[#f4faf8] rounded-3xl border border-[#d8eee6] shadow-xs p-10 flex flex-col items-center justify-center relative overflow-hidden">
             {/* Subtle Clinical Watermark Pattern */}
             <div
-              className="absolute inset-0 opacity-30 pointer-events-none"
+              className="absolute inset-0 opacity-20 pointer-events-none"
               style={{
-                backgroundImage: 'radial-gradient(circle at 1px 1px, #16231a 1px, transparent 0)',
+                backgroundImage: 'radial-gradient(circle at 1px 1px, #0c2340 1px, transparent 0)',
                 backgroundSize: '24px 24px',
               }}
             />
 
             {/* Dose Badge */}
             <div className="relative z-10 mb-6 flex items-center gap-2">
-              <span className="px-3.5 py-1 rounded-full text-xs font-medium tracking-wide bg-linen text-forest-950 border border-stone-200">
+              <span className="px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-white text-[#0c2340] border border-slate-200 shadow-2xs">
                 {product.brand}
               </span>
               {!isKit && (
-                <span
-                  className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider uppercase ${
-                    is300
-                      ? 'bg-forest-900/10 text-forest-950 border border-forest-900/20'
-                      : 'bg-sage-100 text-sage-950 border border-sage-200'
-                  }`}
-                >
+                <span className="px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-[#e6f5f1] text-[#096556] border border-[#c6eee3]">
                   {product.strength}
                 </span>
               )}
@@ -128,8 +122,8 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="relative z-10 mt-6 text-center space-y-1">
-              <span className="text-xs font-serif font-medium text-forest-950 block">{product.pack_size}</span>
-              <span className="text-[11px] text-stone-400 font-medium">UK GPhC Pharmacy Dispatched</span>
+              <span className="text-xs font-bold text-[#0c2340] block">{product.pack_size}</span>
+              <span className="text-[11px] text-slate-500 font-medium">UK GPhC Pharmacy Dispatched</span>
             </div>
           </div>
 
@@ -137,10 +131,10 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-7 space-y-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#006752] bg-[#e6f7f2] border border-[#a7f3d0]">
+                <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#096556] bg-[#e6f5f1] border border-[#c6eee3]">
                   {product.brand} Medical Supply
                 </span>
-                <span className="text-xs text-[#007a60] font-semibold flex items-center gap-1">
+                <span className="text-xs text-[#096556] font-semibold flex items-center gap-1">
                   <CheckCircle className="w-3.5 h-3.5" /> GPhC Approved
                 </span>
               </div>
@@ -151,8 +145,8 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Target Patient Guidance */}
-            <div className="bg-[#f0f7fb] border border-slate-200 rounded-2xl p-4 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-[#007a60] shrink-0 mt-0.5" />
+            <div className="bg-[#f0faf7] border border-[#c6eee3] rounded-2xl p-4 flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-[#096556] shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold text-xs text-[#0c2340] uppercase tracking-wider block mb-0.5">
                   Clinical Intended User
@@ -179,7 +173,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-[#006752] bg-[#e6f7f2] border border-[#a7f3d0]">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-[#096556] bg-[#e6f5f1] border border-[#c6eee3]">
                     Tracked Courier Included
                   </span>
                 </div>
@@ -187,10 +181,10 @@ export default function ProductDetailPage() {
 
               {/* Payment Methods Pill */}
               <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0f7fb] px-3 py-1 rounded-full border border-slate-200">
+                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0faf7] px-3 py-1 rounded-full border border-[#c6eee3]">
                   30-Day BACS School Invoice Available
                 </span>
-                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0f7fb] px-3 py-1 rounded-full border border-slate-200">
+                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0faf7] px-3 py-1 rounded-full border border-[#c6eee3]">
                   Debit / Purchasing Card Accepted
                 </span>
               </div>
@@ -203,7 +197,7 @@ export default function ProductDetailPage() {
               </label>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <div className="flex items-center justify-between border border-slate-200 rounded-full bg-[#f0f7fb] p-1 max-w-[140px]">
+                <div className="flex items-center justify-between border border-slate-200 rounded-full bg-[#f0faf7] p-1 max-w-[140px]">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -228,8 +222,8 @@ export default function ProductDetailPage() {
                   onClick={handleAdd}
                   className={`flex-1 py-3.5 px-6 rounded-full font-bold text-sm tracking-wide flex items-center justify-center gap-2.5 transition-all shadow-sm ${
                     added
-                      ? 'bg-[#007a60] text-white'
-                      : 'bg-[#005eb8] hover:bg-[#004b93] text-white hover:shadow-md'
+                      ? 'bg-[#096556] text-white'
+                      : 'bg-[#096556] hover:bg-[#075145] text-white hover:shadow-md'
                   }`}
                 >
                   {added ? (
@@ -248,7 +242,7 @@ export default function ProductDetailPage() {
 
               <Link
                 href="/basket"
-                className="w-full py-3 rounded-full border border-slate-300 hover:border-[#005eb8] text-[#0c2340] font-bold text-xs flex items-center justify-center gap-2 transition-colors bg-white shadow-xs"
+                className="w-full py-3 rounded-full border border-slate-300 hover:border-[#096556] text-[#0c2340] font-bold text-xs flex items-center justify-center gap-2 transition-colors bg-white shadow-xs"
               >
                 View Basket & Proceed to School Checkout &rarr;
               </Link>
@@ -256,9 +250,9 @@ export default function ProductDetailPage() {
 
             {/* Requisition Requirement Guidance */}
             {product.requires_headteacher_requisition ? (
-              <div className="bg-[#e6f7f2] border border-[#a7f3d0] rounded-2xl p-5 space-y-2">
+              <div className="bg-[#e6f5f1] border border-[#c6eee3] rounded-2xl p-5 space-y-2">
                 <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-[#007a60] shrink-0 mt-0.5" />
+                  <FileText className="w-5 h-5 text-[#096556] shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#0c2340]">
                       Headteacher Requisition Required for School Supply
@@ -269,7 +263,7 @@ export default function ProductDetailPage() {
                     <button
                       type="button"
                       onClick={() => setIsReqOpen(true)}
-                      className="mt-2 text-xs font-bold text-[#005eb8] hover:text-[#003087] hover:underline flex items-center gap-1"
+                      className="mt-2 text-xs font-bold text-[#096556] hover:text-[#075145] hover:underline flex items-center gap-1"
                     >
                       <span>Generate official school requisition form (1-click PDF)</span>
                       &rarr;
@@ -282,24 +276,24 @@ export default function ProductDetailPage() {
             {/* Storage & Service Indicators */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
-                <Truck className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <Truck className="w-5 h-5 mx-auto text-[#096556] mb-1.5" />
                 <p className="text-xs font-bold text-[#0c2340]">Tracked Courier</p>
                 <p className="text-[11px] text-slate-500">Next working day</p>
               </div>
               <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
-                <BellRing className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <BellRing className="w-5 h-5 mx-auto text-[#096556] mb-1.5" />
                 <p className="text-xs font-bold text-[#0c2340]">Expiry Tracking</p>
                 <p className="text-[11px] text-slate-500">12, 6, 3, 1m reminders</p>
               </div>
               <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
-                <ShieldCheck className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <ShieldCheck className="w-5 h-5 mx-auto text-[#096556] mb-1.5" />
                 <p className="text-xs font-bold text-[#0c2340]">GPhC Dispensed</p>
                 <p className="text-[11px] text-slate-500">Verified UK pharmacy</p>
               </div>
             </div>
 
             {/* Storage Guidelines */}
-            <div className="bg-[#f0f7fb] rounded-2xl border border-slate-200 p-4 text-xs text-slate-600">
+            <div className="bg-[#f0faf7] rounded-2xl border border-[#c6eee3] p-4 text-xs text-slate-600">
               <p className="font-bold text-[#0c2340] uppercase tracking-wider text-[11px] mb-1">
                 Clinical Storage Instructions
               </p>

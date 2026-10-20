@@ -107,14 +107,14 @@ function OrderConfirmationContent() {
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
             href="/portal"
-            className="flex-1 py-3.5 rounded-full bg-[#005eb8] hover:bg-[#004b93] text-white font-bold text-xs tracking-wide flex items-center justify-center gap-2 shadow-sm transition-all"
+            className="flex-1 py-3.5 rounded-full bg-[#096556] hover:bg-[#075145] text-white font-bold text-xs tracking-wide flex items-center justify-center gap-2 shadow-sm transition-all"
           >
             Track in School Portal
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/training"
-            className="flex-1 py-3.5 rounded-full border border-stone-200/90 hover:bg-linen/50 text-forest-900 font-medium text-xs flex items-center justify-center gap-2 transition-colors bg-white/80"
+            className="flex-1 py-3.5 rounded-full border border-slate-300 hover:bg-slate-50 text-[#0c2340] font-medium text-xs flex items-center justify-center gap-2 transition-colors bg-white shadow-xs"
           >
             Staff Training Courses
           </Link>

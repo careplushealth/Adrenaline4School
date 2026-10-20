@@ -40,32 +40,32 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Reassurance & Compliance Ticker */}
-      <div className="bg-[#0c2340] text-slate-300 text-xs py-2.5 px-4 border-b border-slate-800 tracking-wide">
+      {/* Top Reassurance & Compliance Announcement Bar */}
+      <div className="bg-[#096556] text-white text-xs py-2.5 px-4 tracking-wide shadow-xs border-b border-[#075145]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
           <div className="flex items-center gap-4 text-center sm:text-left">
-            <span className="flex items-center gap-1.5 text-teal-300 font-medium">
-              <ShieldCheck className="w-4 h-4 text-teal-400" />
+            <span className="flex items-center gap-1.5 text-emerald-100 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-200" />
               UK GPhC Registered Pharmacy Fulfilment
             </span>
-            <span className="hidden md:inline text-slate-600">•</span>
-            <span className="hidden md:inline text-slate-300">Next-Day Medical Courier</span>
-            <span className="hidden md:inline text-slate-600">•</span>
-            <span className="hidden md:inline text-teal-300 font-medium">12, 6, 3 & 1m Expiry Alerts</span>
+            <span className="hidden md:inline text-emerald-300/50">•</span>
+            <span className="hidden md:inline text-white/90">Next-Day Medical Courier</span>
+            <span className="hidden md:inline text-emerald-300/50">•</span>
+            <span className="hidden md:inline text-emerald-100 font-medium">12, 6, 3 & 1m Expiry Alerts</span>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="tel:08001234567" className="hover:text-white transition-colors flex items-center gap-1 text-slate-300">
-              <Phone className="w-3.5 h-3.5 text-teal-400" />
+          <div className="flex items-center gap-4 text-white/90">
+            <a href="tel:08001234567" className="hover:text-white transition-colors flex items-center gap-1">
+              <Phone className="w-3.5 h-3.5 text-emerald-200" />
               <span>0800 123 4567</span>
             </a>
-            <span className="text-slate-700">|</span>
-            <Link href="/portal" className="text-slate-300 hover:text-white flex items-center gap-1 font-medium transition-colors">
-              <UserCheck className="w-3.5 h-3.5 text-teal-300" />
+            <span className="text-emerald-300/40">|</span>
+            <Link href="/portal" className="text-white hover:text-emerald-100 flex items-center gap-1 font-medium transition-colors">
+              <UserCheck className="w-3.5 h-3.5 text-emerald-200" />
               <span>School Portal</span>
             </Link>
-            <span className="text-slate-700">|</span>
-            <Link href="/admin" className="text-teal-300 hover:text-white flex items-center gap-1 font-bold transition-colors bg-teal-500/15 px-2.5 py-0.5 rounded-full border border-teal-500/30">
-              <Lock className="w-3.5 h-3.5 text-teal-400" />
+            <span className="text-emerald-300/40">|</span>
+            <Link href="/admin" className="text-white hover:bg-white/20 flex items-center gap-1 font-bold transition-colors bg-white/10 px-2.5 py-0.5 rounded-full border border-white/25">
+              <Lock className="w-3.5 h-3.5 text-emerald-200" />
               <span>Staff Gateway</span>
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default function Navbar() {
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-forest-900 hover:bg-stone-100"
+                className="p-2.5 rounded-xl text-[#0c2340] hover:text-[#096556] hover:bg-[#f0faf7] transition-colors"
                 aria-label="Toggle Navigation"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -157,30 +157,35 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="sm:hidden border-t border-slate-200 bg-white px-5 pt-3 pb-6 shadow-xl animate-fade-in-up">
             <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide ${
-                    pathname === link.href ? 'text-[#005eb8] bg-[#f0f7fb] font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                      isActive
+                        ? 'text-[#096556] bg-[#f0faf7] border border-[#c6eee3] font-bold'
+                        : 'text-slate-700 hover:text-[#096556] hover:bg-[#f0faf7]'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
               <div className="pt-3 border-t border-slate-200 mt-2 flex flex-col gap-2">
                 <Link
                   href="/portal"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-full border border-slate-300 text-slate-800 font-semibold text-xs hover:bg-slate-50"
+                  className="w-full text-center py-2.5 rounded-full border border-[#c6eee3] text-[#096556] bg-[#f0faf7] hover:bg-[#e6f5f1] font-semibold text-xs transition-colors"
                 >
                   School Portal Sign In
                 </Link>
                 <Link
                   href="/order-pens"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-3 rounded-full bg-[#005eb8] hover:bg-[#004b93] text-white font-bold text-xs tracking-wide shadow-sm"
+                  className="w-full text-center py-3 rounded-full bg-[#096556] hover:bg-[#075145] text-white font-bold text-xs tracking-wide shadow-sm"
                 >
                   Order Emergency Pens Now &rarr;
                 </Link>

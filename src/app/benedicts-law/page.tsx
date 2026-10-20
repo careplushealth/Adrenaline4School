@@ -50,7 +50,7 @@ export default function BenedictsLawPage() {
               onClick={() => setActiveSection(tab.id)}
               className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
                 activeSection === tab.id
-                  ? 'bg-[#005eb8] text-white shadow-xs font-bold'
+                  ? 'bg-[#096556] text-white shadow-xs font-bold'
                   : 'text-slate-600 hover:text-[#0c2340] hover:bg-slate-100'
               }`}
             >
@@ -165,7 +165,7 @@ export default function BenedictsLawPage() {
               </p>
               <Link
                 href="/order-pens"
-                className="block w-full py-3 rounded-full bg-[#005eb8] hover:bg-[#004b93] text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-sm"
+                className="block w-full py-3 rounded-full bg-[#096556] hover:bg-[#075145] text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-sm"
               >
                 Order Emergency Pens <ArrowRight className="inline w-3.5 h-3.5 ml-1" />
               </Link>
@@ -174,7 +174,7 @@ export default function BenedictsLawPage() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5">
               <h3 className="font-bold text-[#0c2340] mb-2 text-base">Free Staff Training</h3>
               <p className="text-xs text-slate-600 mb-4 leading-relaxed">Our online modules cover anaphylaxis awareness, auto-injector use, and school allergy policy compliance.</p>
-              <Link href="/training" className="flex items-center gap-2 text-xs font-semibold text-[#005eb8] hover:text-[#003087]">
+              <Link href="/training" className="flex items-center gap-2 text-xs font-semibold text-[#096556] hover:text-[#075145]">
                 <BookOpen className="w-4 h-4" /> Explore Training Courses
               </Link>
             </div>
@@ -182,7 +182,7 @@ export default function BenedictsLawPage() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5">
               <h3 className="font-bold text-[#0c2340] mb-2 text-base">Human Medicines Regulations</h3>
               <p className="text-xs text-slate-600 mb-3 leading-relaxed">The 2017 regulations allow schools to hold spare pens via a Headteacher Requisition — no individual prescriptions needed.</p>
-              <Link href="/how-it-works" className="text-xs font-semibold text-[#005eb8] hover:text-[#003087]">
+              <Link href="/how-it-works" className="text-xs font-semibold text-[#096556] hover:text-[#075145]">
                 See how the requisition works →
               </Link>
             </div>
