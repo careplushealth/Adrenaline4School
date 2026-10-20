@@ -4,12 +4,12 @@ import React from 'react';
 
 export default function HeroSceneIllustration() {
   return (
-    <div className="relative w-full max-w-lg mx-auto flex items-center justify-center select-none">
+    <div className="relative w-full max-w-md sm:max-w-lg mx-auto flex items-center justify-center select-none">
       {/* Soft Blue Oval Background */}
       <div className="absolute inset-0 bg-[#e8f4f8] rounded-full scale-95 blur-2xl opacity-70 pointer-events-none" />
 
       <svg
-        viewBox="0 0 520 420"
+        viewBox="35 15 500 405"
         className="w-full h-auto drop-shadow-md overflow-visible select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -179,9 +179,9 @@ export default function HeroSceneIllustration() {
           <line x1="350" y1="230" x2="335" y2="235" />
           <line x1="358" y1="245" x2="342" y2="252" />
           {/* Sparkles on Right Pen */}
-          <line x1="495" y1="225" x2="510" y2="220" />
-          <line x1="500" y1="242" x2="515" y2="245" />
-          <line x1="496" y1="260" x2="512" y2="265" />
+          <line x1="480" y1="225" x2="494" y2="220" />
+          <line x1="484" y1="242" x2="498" y2="245" />
+          <line x1="480" y1="258" x2="494" y2="263" />
         </g>
 
         {/* Left Device: EpiPen® 300mcg (Yellow Body, Blue Cap, Black Base) */}
