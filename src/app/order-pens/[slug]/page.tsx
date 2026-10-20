@@ -137,60 +137,60 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-7 space-y-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-3 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider text-sage-900 bg-sage-50 border border-sage-200">
+                <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#006752] bg-[#e6f7f2] border border-[#a7f3d0]">
                   {product.brand} Medical Supply
                 </span>
-                <span className="text-xs text-sage-700 font-medium flex items-center gap-1">
+                <span className="text-xs text-[#007a60] font-semibold flex items-center gap-1">
                   <CheckCircle className="w-3.5 h-3.5" /> GPhC Approved
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-serif font-normal text-forest-950 tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl font-bold text-[#0c2340] tracking-tight leading-tight">
                 {product.name}
               </h1>
-              <p className="text-stone-600 mt-3 text-sm leading-relaxed">{product.description}</p>
+              <p className="text-slate-600 mt-3 text-sm leading-relaxed">{product.description}</p>
             </div>
 
             {/* Target Patient Guidance */}
-            <div className="bg-linen/50 border border-stone-200/70 rounded-2xl p-4 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-sage-700 shrink-0 mt-0.5" />
+            <div className="bg-[#f0f7fb] border border-slate-200 rounded-2xl p-4 flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-[#007a60] shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold text-xs text-forest-950 uppercase tracking-wider block mb-0.5">
+                <span className="font-bold text-xs text-[#0c2340] uppercase tracking-wider block mb-0.5">
                   Clinical Intended User
                 </span>
-                <p className="text-xs text-stone-600 leading-relaxed">{product.target_group}</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{product.target_group}</p>
               </div>
             </div>
 
             {/* Pricing Box */}
-            <div className="bg-white/90 rounded-2xl border border-stone-200/80 p-6 shadow-xs space-y-3">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
               <div className="flex items-baseline justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-serif font-normal text-forest-950 tracking-tight">
+                    <span className="text-4xl font-bold text-[#0c2340] tracking-tight">
                       £{product.price.toFixed(2)}
                     </span>
-                    <span className="text-xs font-medium text-stone-400 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                       ex UK VAT
                     </span>
                   </div>
-                  <p className="text-xs text-stone-500 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     £{vatPrice.toFixed(2)} inc. 20% VAT · {product.pack_size}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-medium text-sage-800 bg-sage-50 border border-sage-200">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-[#006752] bg-[#e6f7f2] border border-[#a7f3d0]">
                     Tracked Courier Included
                   </span>
                 </div>
               </div>
 
               {/* Payment Methods Pill */}
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-stone-100">
-                <span className="text-[11px] font-medium text-forest-900 bg-linen/70 px-3 py-1 rounded-full border border-stone-200">
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0f7fb] px-3 py-1 rounded-full border border-slate-200">
                   30-Day BACS School Invoice Available
                 </span>
-                <span className="text-[11px] font-medium text-forest-900 bg-linen/70 px-3 py-1 rounded-full border border-stone-200">
+                <span className="text-[11px] font-semibold text-[#0c2340] bg-[#f0f7fb] px-3 py-1 rounded-full border border-slate-200">
                   Debit / Purchasing Card Accepted
                 </span>
               </div>
@@ -198,26 +198,26 @@ export default function ProductDetailPage() {
 
             {/* Quantity Stepper & Add to Basket */}
             <div className="space-y-4 pt-2">
-              <label className="text-xs font-medium text-forest-950 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-[#0c2340] uppercase tracking-wider block">
                 Select Quantity ({product.pack_size.includes('Twin') ? 'Twin Packs' : 'Units'})
               </label>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <div className="flex items-center justify-between border border-stone-200 rounded-full bg-linen/40 p-1 max-w-[140px]">
+                <div className="flex items-center justify-between border border-slate-200 rounded-full bg-[#f0f7fb] p-1 max-w-[140px]">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-9 h-9 rounded-full hover:bg-white text-forest-900 font-medium flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full hover:bg-white text-slate-800 font-medium flex items-center justify-center transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-10 text-center font-serif text-lg text-forest-950">
+                  <span className="w-10 text-center font-bold text-lg text-[#0c2340]">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-9 h-9 rounded-full hover:bg-white text-forest-900 font-medium flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full hover:bg-white text-slate-800 font-medium flex items-center justify-center transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -226,10 +226,10 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   onClick={handleAdd}
-                  className={`flex-1 py-3.5 px-6 rounded-full font-medium text-sm tracking-wide flex items-center justify-center gap-2.5 transition-all shadow-xs ${
+                  className={`flex-1 py-3.5 px-6 rounded-full font-bold text-sm tracking-wide flex items-center justify-center gap-2.5 transition-all shadow-sm ${
                     added
-                      ? 'bg-sage-700 text-white'
-                      : 'bg-forest-900 hover:bg-forest-800 text-ivory hover:shadow-sm'
+                      ? 'bg-[#007a60] text-white'
+                      : 'bg-[#005eb8] hover:bg-[#004b93] text-white hover:shadow-md'
                   }`}
                 >
                   {added ? (
@@ -248,7 +248,7 @@ export default function ProductDetailPage() {
 
               <Link
                 href="/basket"
-                className="w-full py-3 rounded-full border border-stone-200/90 hover:border-sage-400 text-forest-900 font-medium text-xs flex items-center justify-center gap-2 transition-colors bg-white/80"
+                className="w-full py-3 rounded-full border border-slate-300 hover:border-[#005eb8] text-[#0c2340] font-bold text-xs flex items-center justify-center gap-2 transition-colors bg-white shadow-xs"
               >
                 View Basket & Proceed to School Checkout &rarr;
               </Link>
@@ -256,20 +256,20 @@ export default function ProductDetailPage() {
 
             {/* Requisition Requirement Guidance */}
             {product.requires_headteacher_requisition ? (
-              <div className="bg-sage-50/60 border border-sage-200/80 rounded-2xl p-5 space-y-2">
+              <div className="bg-[#e6f7f2] border border-[#a7f3d0] rounded-2xl p-5 space-y-2">
                 <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-sage-800 shrink-0 mt-0.5" />
+                  <FileText className="w-5 h-5 text-[#007a60] shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <h4 className="text-xs font-serif font-medium uppercase tracking-wider text-forest-950">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0c2340]">
                       Headteacher Requisition Required for School Supply
                     </h4>
-                    <p className="text-xs text-stone-600 leading-relaxed">
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Per the <em>Human Medicines (Amendment) Regulations 2017</em>, schools must provide a signed Headteacher Requisition before prescription-only adrenaline auto-injectors can be dispatched.
                     </p>
                     <button
                       type="button"
                       onClick={() => setIsReqOpen(true)}
-                      className="mt-2 text-xs font-semibold text-sage-800 hover:text-forest-950 hover:underline flex items-center gap-1"
+                      className="mt-2 text-xs font-bold text-[#005eb8] hover:text-[#003087] hover:underline flex items-center gap-1"
                     >
                       <span>Generate official school requisition form (1-click PDF)</span>
                       &rarr;
@@ -281,26 +281,26 @@ export default function ProductDetailPage() {
 
             {/* Storage & Service Indicators */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div className="bg-white/80 border border-stone-200/70 rounded-2xl p-4 text-center">
-                <Truck className="w-5 h-5 mx-auto text-sage-700 mb-1.5" />
-                <p className="text-xs font-serif text-forest-950">Tracked Courier</p>
-                <p className="text-[11px] text-stone-500">Next working day</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
+                <Truck className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <p className="text-xs font-bold text-[#0c2340]">Tracked Courier</p>
+                <p className="text-[11px] text-slate-500">Next working day</p>
               </div>
-              <div className="bg-white/80 border border-stone-200/70 rounded-2xl p-4 text-center">
-                <BellRing className="w-5 h-5 mx-auto text-sage-700 mb-1.5" />
-                <p className="text-xs font-serif text-forest-950">Expiry Tracking</p>
-                <p className="text-[11px] text-stone-500">12, 6, 3, 1m reminders</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
+                <BellRing className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <p className="text-xs font-bold text-[#0c2340]">Expiry Tracking</p>
+                <p className="text-[11px] text-slate-500">12, 6, 3, 1m reminders</p>
               </div>
-              <div className="bg-white/80 border border-stone-200/70 rounded-2xl p-4 text-center">
-                <ShieldCheck className="w-5 h-5 mx-auto text-sage-700 mb-1.5" />
-                <p className="text-xs font-serif text-forest-950">GPhC Dispensed</p>
-                <p className="text-[11px] text-stone-500">Verified UK pharmacy</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-xs">
+                <ShieldCheck className="w-5 h-5 mx-auto text-[#007a60] mb-1.5" />
+                <p className="text-xs font-bold text-[#0c2340]">GPhC Dispensed</p>
+                <p className="text-[11px] text-slate-500">Verified UK pharmacy</p>
               </div>
             </div>
 
             {/* Storage Guidelines */}
-            <div className="bg-linen/40 rounded-2xl border border-stone-200/70 p-4 text-xs text-stone-600">
-              <p className="font-semibold text-forest-900 uppercase tracking-wider text-[11px] mb-1">
+            <div className="bg-[#f0f7fb] rounded-2xl border border-slate-200 p-4 text-xs text-slate-600">
+              <p className="font-bold text-[#0c2340] uppercase tracking-wider text-[11px] mb-1">
                 Clinical Storage Instructions
               </p>
               <p>{product.storage_instructions}</p>

@@ -8,35 +8,35 @@ export default function BenedictsLawPage() {
   const [activeSection, setActiveSection] = useState('overview');
 
   return (
-    <div className="min-h-screen bg-ivory text-forest-900 font-sans">
+    <div className="min-h-screen bg-white text-[#0c2340] font-sans">
       {/* Header */}
-      <section className="bg-forest-950 text-stone-200 py-16 px-4 border-b border-forest-900/60 relative overflow-hidden">
+      <section className="bg-[#0c2340] text-slate-200 py-16 px-4 border-b border-slate-800 relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-[0.035] pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #FAF8F5 1px, transparent 0)',
+            backgroundImage: 'radial-gradient(circle at 1px 1px, #ffffff 1px, transparent 0)',
             backgroundSize: '24px 24px',
           }}
         />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-sage-800/50 border border-sage-700/60 flex items-center justify-center mx-auto mb-5 text-gold-300">
+          <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto mb-5 text-amber-400">
             <Scale className="w-7 h-7" />
           </div>
-          <span className="text-gold-300 text-xs font-semibold uppercase tracking-widest bg-gold-400/10 px-3.5 py-1 rounded-full border border-gold-400/20">
+          <span className="text-teal-300 text-xs font-bold uppercase tracking-widest bg-teal-500/20 px-3.5 py-1 rounded-full border border-teal-500/30">
             Statutory Guidance 2026
           </span>
-          <h1 className="text-4xl sm:text-5xl font-serif font-normal text-ivory mt-4 mb-4 tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mt-4 mb-4 tracking-tight">
             Benedict&apos;s Law
           </h1>
-          <p className="text-stone-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             Understanding England&apos;s statutory guidance on school allergy preparedness, and how Adrenaline4Schools helps your school comply.
           </p>
         </div>
       </section>
 
       {/* Navigation */}
-      <div className="border-b border-stone-200/80 bg-ivory/95 backdrop-blur-md sticky top-0 z-20 shadow-xs">
+      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-20 shadow-xs">
         <div className="max-w-5xl mx-auto px-4 flex gap-1.5 overflow-x-auto py-2.5">
           {[
             { id: 'overview', label: 'Overview' },
@@ -48,10 +48,10 @@ export default function BenedictsLawPage() {
             <button
               key={tab.id}
               onClick={() => setActiveSection(tab.id)}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
                 activeSection === tab.id
-                  ? 'bg-forest-900 text-ivory shadow-xs'
-                  : 'text-stone-600 hover:text-forest-900 hover:bg-linen/60'
+                  ? 'bg-[#005eb8] text-white shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-[#0c2340] hover:bg-slate-100'
               }`}
             >
               {tab.label}
@@ -158,31 +158,31 @@ export default function BenedictsLawPage() {
 
           {/* Sidebar */}
           <div className="space-y-4">
-            <div className="bg-forest-900 text-ivory rounded-3xl p-6 border border-forest-800 shadow-sm">
-              <h3 className="font-serif font-normal text-xl mb-2 text-ivory">Get Compliant Today</h3>
-              <p className="text-stone-300 text-xs sm:text-sm mb-5 leading-relaxed">
+            <div className="bg-[#0c2340] text-white rounded-3xl p-6 border border-slate-800 shadow-sm">
+              <h3 className="font-bold text-xl mb-2 text-white">Get Compliant Today</h3>
+              <p className="text-slate-300 text-xs sm:text-sm mb-5 leading-relaxed">
                 Order spare emergency pens, set up automated expiry tracking, and access free staff training.
               </p>
               <Link
                 href="/order-pens"
-                className="block w-full py-3 rounded-full bg-gold-400 hover:bg-gold-300 text-forest-950 font-semibold text-xs uppercase tracking-wider text-center transition-all shadow-xs"
+                className="block w-full py-3 rounded-full bg-[#005eb8] hover:bg-[#004b93] text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-sm"
               >
                 Order Emergency Pens <ArrowRight className="inline w-3.5 h-3.5 ml-1" />
               </Link>
             </div>
 
-            <div className="bg-white/90 rounded-2xl border border-stone-200/80 shadow-xs p-5">
-              <h3 className="font-serif font-medium text-forest-950 mb-2 text-base">Free Staff Training</h3>
-              <p className="text-xs text-stone-600 mb-4 leading-relaxed">Our online modules cover anaphylaxis awareness, auto-injector use, and school allergy policy compliance.</p>
-              <Link href="/training" className="flex items-center gap-2 text-xs font-medium text-sage-800 hover:text-forest-950">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5">
+              <h3 className="font-bold text-[#0c2340] mb-2 text-base">Free Staff Training</h3>
+              <p className="text-xs text-slate-600 mb-4 leading-relaxed">Our online modules cover anaphylaxis awareness, auto-injector use, and school allergy policy compliance.</p>
+              <Link href="/training" className="flex items-center gap-2 text-xs font-semibold text-[#005eb8] hover:text-[#003087]">
                 <BookOpen className="w-4 h-4" /> Explore Training Courses
               </Link>
             </div>
 
-            <div className="bg-white/90 rounded-2xl border border-stone-200/80 shadow-xs p-5">
-              <h3 className="font-serif font-medium text-forest-950 mb-2 text-base">Human Medicines Regulations</h3>
-              <p className="text-xs text-stone-600 mb-3 leading-relaxed">The 2017 regulations allow schools to hold spare pens via a Headteacher Requisition — no individual prescriptions needed.</p>
-              <Link href="/how-it-works" className="text-xs font-medium text-sage-800 hover:text-forest-950">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5">
+              <h3 className="font-bold text-[#0c2340] mb-2 text-base">Human Medicines Regulations</h3>
+              <p className="text-xs text-slate-600 mb-3 leading-relaxed">The 2017 regulations allow schools to hold spare pens via a Headteacher Requisition — no individual prescriptions needed.</p>
+              <Link href="/how-it-works" className="text-xs font-semibold text-[#005eb8] hover:text-[#003087]">
                 See how the requisition works →
               </Link>
             </div>

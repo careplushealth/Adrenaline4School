@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 22, 35, 26;
-  --background-rgb: 250, 248, 245;
+  --foreground-rgb: 12, 35, 64; /* Clinical Deep Navy #0c2340 */
+  --background-rgb: 255, 255, 255; /* Pure Clinical White */
 }
 
 body {
@@ -14,6 +14,7 @@ body {
   background: rgb(var(--background-rgb));
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 @layer utilities {
@@ -22,7 +23,7 @@ body {
   }
 }
 
-/* Refined animations for wellness micro-interactions */
+/* Clinical fade-in animation */
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
@@ -38,18 +39,179 @@ body {
   animation: fadeInSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Custom organic scrollbars */
+/* 4-Step Process Colorful Keyframe Animations */
+@keyframes vanDrive {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes wheelSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes speedLine {
+  0% {
+    transform: translateX(0);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(-14px);
+    opacity: 0.15;
+  }
+}
+
+@keyframes penSign {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-3px, -2px) rotate(-1.5deg);
+  }
+  45% {
+    transform: translate(5px, 2px) rotate(2deg);
+  }
+  70% {
+    transform: translate(-2px, 1px) rotate(-1deg);
+  }
+}
+
+@keyframes signatureDraw {
+  0% {
+    stroke-dashoffset: 120;
+    opacity: 0.3;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 120;
+    opacity: 0.3;
+  }
+}
+
+@keyframes uploadBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes radarPulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes cursorClick {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  30% {
+    transform: translate(-4px, -4px) scale(0.92);
+  }
+  50% {
+    transform: translate(-4px, -4px) scale(1.05);
+  }
+}
+
+@keyframes clickRipple {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  60% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes flowArrowGuide {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+}
+
+.animate-van-drive {
+  animation: vanDrive 1.8s ease-in-out infinite;
+}
+
+.animate-speed-lines {
+  animation: speedLine 0.9s linear infinite;
+}
+
+.animate-pen-sign {
+  animation: penSign 2.4s ease-in-out infinite;
+}
+
+.animate-upload-bounce {
+  animation: uploadBounce 1.8s ease-in-out infinite;
+}
+
+.animate-radar-pulse {
+  animation: radarPulse 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-cursor-click {
+  animation: cursorClick 2.2s ease-in-out infinite;
+}
+
+.animate-click-ripple {
+  animation: clickRipple 2.2s ease-out infinite;
+}
+
+.animate-flow-arrow {
+  animation: flowArrowGuide 1.6s ease-in-out infinite;
+}
+
+/* Clean NHS Clinical Scrollbars */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #f5f2eb;
+  background: #f0f7fb;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d2ded5;
+  background: #bae3f5;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #7b9f87;
+  background: #005eb8;
 }
