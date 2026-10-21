@@ -15,7 +15,8 @@ import {
   FileText, 
   UserCheck, 
   LayoutDashboard,
-  Lock
+  Lock,
+  Shield
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -64,9 +65,13 @@ export default function Navbar() {
               <span>School Portal</span>
             </Link>
             <span className="text-emerald-300/40">|</span>
-            <Link href="/admin" className="text-white hover:bg-white/20 flex items-center gap-1 font-bold transition-colors bg-white/10 px-2.5 py-0.5 rounded-full border border-white/25">
-              <Lock className="w-3.5 h-3.5 text-emerald-200" />
-              <span>Staff Gateway</span>
+            <Link
+              href="/admin"
+              className="text-white/80 hover:text-white hover:bg-white/15 p-1 rounded-full transition-colors flex items-center justify-center"
+              title="Admin Portal Login"
+              aria-label="Admin Portal Login"
+            >
+              <Shield className="w-3.5 h-3.5 text-emerald-200" />
             </Link>
           </div>
         </div>
@@ -80,7 +85,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-3 group py-1">
               <img
                 src="/logo.png"
-                alt="Adrenaline4School"
+                alt="Adrenaline4Schools"
                 className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
               />
             </Link>

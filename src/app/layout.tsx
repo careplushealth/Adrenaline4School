@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { CartProvider } from '@/lib/cart-context';
+import { SchoolAuthProvider } from '@/lib/school-auth-context';
 import AppShell from '@/components/AppShell';
 
 export const metadata: Metadata = {
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en-GB">
       <body className="font-sans min-h-screen flex flex-col bg-white text-[#0c2340] antialiased selection:bg-[#096556] selection:text-white">
-        <CartProvider>
-          <AppShell>{children}</AppShell>
-        </CartProvider>
+        <SchoolAuthProvider>
+          <CartProvider>
+            <AppShell>{children}</AppShell>
+          </CartProvider>
+        </SchoolAuthProvider>
       </body>
     </html>
   );

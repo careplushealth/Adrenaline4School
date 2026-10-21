@@ -5,7 +5,7 @@ import db from '@/lib/db';
 export async function GET(request: Request, { params }: { params: { token: string } }) {
   try {
     const token = params.token;
-    const supply = db.prepare(`
+    const supply = (await db.prepare(`
       SELECT 
         sup.*,
         s.name as school_name,
@@ -30,7 +30,7 @@ export async function GET(request: Request, { params }: { params: { token: strin
       JOIN products p ON sup.product_id = p.id
       JOIN organisations org ON s.organisation_id = org.id
       WHERE sup.reorder_token = ?
-    `).get(token) as any;
+    `).get(token)) as any;
 
     if (!supply) {
       return NextResponse.json({ success: false, error: 'Invalid or expired reorder link' }, { status: 404 });

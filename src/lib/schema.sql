@@ -331,3 +331,31 @@ CREATE TABLE IF NOT EXISTS cms_content (
     content_json TEXT NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS auth_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    token TEXT NOT NULL,
+    type TEXT NOT NULL, -- 'email_verification', 'password_reset'
+    expires_at DATETIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS uk_schools_directory (
+    urn TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phase TEXT,
+    type TEXT,
+    local_authority TEXT,
+    address_line1 TEXT,
+    address_line2 TEXT,
+    town_city TEXT,
+    postcode TEXT,
+    phone TEXT,
+    headteacher_name TEXT,
+    headteacher_email TEXT,
+    office_email TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+

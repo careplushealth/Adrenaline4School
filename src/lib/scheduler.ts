@@ -20,11 +20,11 @@ export interface SchedulerResult {
  * Idempotent: checks for pending reminders where scheduled_date <= today.
  * Prevents duplicates by verifying status = 'pending'.
  */
-export function runExpiryReminderSweep(): SchedulerResult {
+export async function runExpiryReminderSweep(): Promise<SchedulerResult> {
   const today = new Date().toISOString().split('T')[0];
 
   // Find due reminders
-  const dueReminders = db.prepare(`
+  const dueReminders = (await db.prepare(`
     SELECT 
       r.id as reminder_id,
       r.supply_record_id,
@@ -44,7 +44,7 @@ export function runExpiryReminderSweep(): SchedulerResult {
     JOIN products p ON sup.product_id = p.id
     WHERE r.status = 'pending' AND r.scheduled_date <= ?
       AND sup.status != 'replaced'
-  `).all(today) as any[];
+  `).all(today)) as any[];
 
   let sent = 0;
   let failed = 0;
@@ -56,8 +56,8 @@ export function runExpiryReminderSweep(): SchedulerResult {
       let token = rem.reorder_token;
       if (!token) {
         token = `reorder-${crypto.randomBytes(12).toString('hex')}`;
-        db.prepare('UPDATE expiry_reminders SET reorder_token = ? WHERE id = ?').run(token, rem.reminder_id);
-        db.prepare('UPDATE school_supply_records SET reorder_token = ? WHERE id = ?').run(token, rem.supply_record_id);
+        await db.prepare('UPDATE expiry_reminders SET reorder_token = ? WHERE id = ?').run(token, rem.reminder_id);
+        await db.prepare('UPDATE school_supply_records SET reorder_token = ? WHERE id = ?').run(token, rem.supply_record_id);
       }
 
       const emailHtml = generateExpiryReminderEmail({
@@ -71,7 +71,7 @@ export function runExpiryReminderSweep(): SchedulerResult {
         reorderToken: token,
       });
 
-      const emailResult = sendEmail({
+      const emailResult = await sendEmail({
         to: rem.recipient_email,
         subject: `[ACTION REQUIRED] Emergency Adrenaline Expiry Notice: ${rem.school_name} (${rem.interval_months} Month Reminder)`,
         templateType: 'expiry_reminder',
@@ -81,13 +81,13 @@ export function runExpiryReminderSweep(): SchedulerResult {
       });
 
       if (emailResult.success) {
-        db.prepare(`
+        await db.prepare(`
           UPDATE expiry_reminders 
           SET status = 'sent', sent_at = CURRENT_TIMESTAMP 
           WHERE id = ?
         `).run(rem.reminder_id);
 
-        db.prepare(`
+        await db.prepare(`
           UPDATE school_supply_records 
           SET status = 'approaching_expiry' 
           WHERE id = ? AND status = 'active'
@@ -103,7 +103,7 @@ export function runExpiryReminderSweep(): SchedulerResult {
         });
       } else {
         failed++;
-        db.prepare(`
+        await db.prepare(`
           UPDATE expiry_reminders 
           SET status = 'failed', error_message = 'Failed to deliver email' 
           WHERE id = ?
@@ -117,7 +117,7 @@ export function runExpiryReminderSweep(): SchedulerResult {
 
   // Record audit log
   if (dueReminders.length > 0) {
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO audit_logs (id, user_id, user_name, action, entity_type, entity_id, details)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -142,8 +142,8 @@ export function runExpiryReminderSweep(): SchedulerResult {
 /**
  * Manually trigger an immediate reminder email for an individual supply record.
  */
-export function sendManualReminder(supplyId: string): { success: boolean; message: string } {
-  const supply = db.prepare(`
+export async function sendManualReminder(supplyId: string): Promise<{ success: boolean; message: string }> {
+  const supply = (await db.prepare(`
     SELECT 
       sup.id,
       sup.batch_number,
@@ -159,7 +159,7 @@ export function sendManualReminder(supplyId: string): { success: boolean; messag
     JOIN schools s ON sup.school_id = s.id
     JOIN products p ON sup.product_id = p.id
     WHERE sup.id = ?
-  `).get(supplyId) as any;
+  `).get(supplyId)) as any;
 
   if (!supply) {
     return { success: false, message: 'Supply record not found' };
@@ -168,7 +168,7 @@ export function sendManualReminder(supplyId: string): { success: boolean; messag
   let token = supply.reorder_token;
   if (!token) {
     token = `reorder-${crypto.randomBytes(12).toString('hex')}`;
-    db.prepare('UPDATE school_supply_records SET reorder_token = ? WHERE id = ?').run(token, supply.id);
+    await db.prepare('UPDATE school_supply_records SET reorder_token = ? WHERE id = ?').run(token, supply.id);
   }
 
   // Calculate approximate months remaining
@@ -187,7 +187,7 @@ export function sendManualReminder(supplyId: string): { success: boolean; messag
     reorderToken: token,
   });
 
-  const emailResult = sendEmail({
+  const emailResult = await sendEmail({
     to: supply.headteacher_email,
     subject: `[MANUAL EXPIRY NOTICE] ${supply.school_name} - Emergency Auto-Injector Expiry Alert`,
     templateType: 'manual_expiry_reminder',

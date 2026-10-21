@@ -8,11 +8,11 @@ export async function GET(request: Request) {
     const key = searchParams.get('key');
 
     if (key) {
-      const item = db.prepare('SELECT * FROM cms_content WHERE key = ?').get(key);
+      const item = await db.prepare('SELECT * FROM cms_content WHERE key = ?').get(key);
       return NextResponse.json({ success: true, item });
     }
 
-    const items = db.prepare('SELECT * FROM cms_content ORDER BY section ASC').all();
+    const items = await db.prepare('SELECT * FROM cms_content ORDER BY section ASC').all();
     return NextResponse.json({ success: true, items });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { key, title, section, contentJson } = body;
 
-    db.prepare(`
+    await db.prepare(`
       INSERT OR REPLACE INTO cms_content (key, title, section, content_json, updated_at)
       VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
     `).run(key, title, section, typeof contentJson === 'string' ? contentJson : JSON.stringify(contentJson));

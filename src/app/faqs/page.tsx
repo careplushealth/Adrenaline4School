@@ -63,10 +63,10 @@ export default function FAQsPage() {
         />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-sage-800/50 border border-sage-700/60 flex items-center justify-center mx-auto mb-5 text-gold-300">
+          <div className="w-14 h-14 rounded-2xl bg-[#096556]/20 border border-[#096556]/40 flex items-center justify-center mx-auto mb-5 text-emerald-300">
             <HelpCircle className="w-7 h-7" />
           </div>
-          <span className="text-gold-300 text-xs font-semibold uppercase tracking-widest bg-gold-400/10 px-3.5 py-1 rounded-full border border-gold-400/20">
+          <span className="text-emerald-300 text-xs font-semibold uppercase tracking-widest bg-emerald-400/10 px-3.5 py-1 rounded-full border border-emerald-400/20">
             School Support Knowledgebase
           </span>
           <h1 className="text-4xl sm:text-5xl font-serif font-normal text-ivory mt-4 mb-3 tracking-tight">

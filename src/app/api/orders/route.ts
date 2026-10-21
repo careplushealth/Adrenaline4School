@@ -43,14 +43,16 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY o.created_at DESC';
 
-    const orders = db.prepare(query).all(...params);
+    const orders = await db.prepare(query).all(...params);
 
     // Fetch items for each order
     const getItems = db.prepare('SELECT * FROM order_items WHERE order_id = ?');
-    const ordersWithItems = orders.map((order: any) => ({
-      ...order,
-      items: getItems.all(order.id),
-    }));
+    const ordersWithItems = await Promise.all(
+      orders.map(async (order: any) => ({
+        ...order,
+        items: await getItems.all(order.id),
+      }))
+    );
 
     return NextResponse.json({ success: true, orders: ordersWithItems });
   } catch (error: any) {
@@ -96,7 +98,7 @@ export async function POST(request: Request) {
     let schoolId = 'sch-default';
 
     // Look up existing school by name or postcode
-    const existingSchool = db.prepare('SELECT id, organisation_id FROM schools WHERE name = ? OR postcode = ?').get(schoolName, deliveryPostcode) as any;
+    const existingSchool = await db.prepare('SELECT id, organisation_id FROM schools WHERE name = ? OR postcode = ?').get(schoolName, deliveryPostcode) as any;
 
     if (existingSchool) {
       schoolId = existingSchool.id;
@@ -106,12 +108,12 @@ export async function POST(request: Request) {
       orgId = `org-${Date.now()}`;
       schoolId = `sch-${Date.now()}`;
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO organisations (id, name, type, billing_email, billing_phone)
         VALUES (?, ?, 'Single School', ?, ?)
       `).run(orgId, billingOrgName || schoolName, contactEmail, contactPhone);
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO schools (id, organisation_id, urn, name, address_line1, address_line2, town_city, postcode, headteacher_name, headteacher_email, phone)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
@@ -123,7 +125,7 @@ export async function POST(request: Request) {
     // 2. Server-side recalculation of prices (Never trust client prices)
     const productIds = items.map((i: any) => i.productId);
     const placeholders = productIds.map(() => '?').join(',');
-    const dbProducts = db.prepare(`SELECT * FROM products WHERE id IN (${placeholders})`).all(...productIds) as any[];
+    const dbProducts = await db.prepare(`SELECT * FROM products WHERE id IN (${placeholders})`).all(...productIds) as any[];
 
     let subtotal = 0;
     const validatedItems: any[] = [];
@@ -162,7 +164,7 @@ export async function POST(request: Request) {
     const totalAmount = subtotal + vatTotal + shippingTotal;
 
     // 3. Generate sequential order reference: e.g. A4S-2026-00104
-    const countRow = db.prepare('SELECT count(*) as count FROM orders').get() as { count: number };
+    const countRow = await db.prepare('SELECT count(*) as count FROM orders').get() as { count: number };
     const orderSeq = (countRow?.count || 0) + 104;
     const orderReference = `A4S-2026-${orderSeq.toString().padStart(5, '0')}`;
     const orderId = `ord-${Date.now()}`;
@@ -174,8 +176,8 @@ export async function POST(request: Request) {
     const docStatus = requisitionDocName ? 'uploaded' : 'pending';
 
     // 4. Insert Order inside transaction
-    db.transaction(() => {
-      db.prepare(`
+    await db.transaction(async () => {
+      await db.prepare(`
         INSERT INTO orders (
           id, order_reference, organisation_id, school_id, contact_name, contact_email, contact_phone,
           delivery_school_name, delivery_address_line1, delivery_address_line2, delivery_city, delivery_postcode, delivery_instructions,
@@ -190,9 +192,9 @@ export async function POST(request: Request) {
           ?, 'pending', ?, ?
         )
       `).run(
-        orderId, orderReference, orgId, schoolId, contactName, contactEmail, contactPhone,
+        orderId, orderReference, orgId, schoolId, contactName, contactEmail, contactPhone || '0800 123 4567',
         schoolName, deliveryAddress1, deliveryAddress2 || null, deliveryCity, deliveryPostcode, deliveryInstructions || null,
-        billingOrgName || schoolName, billingAddress1, billingAddress2 || null, billingCity, billingPostcode, poNumber || null,
+        billingOrgName || schoolName, billingAddress1 || deliveryAddress1, billingAddress2 || deliveryAddress2 || null, billingCity || deliveryCity, billingPostcode || deliveryPostcode, poNumber || null,
         subtotal, vatTotal, shippingTotal, totalAmount, paymentMethod, paymentStatus, orderStatus,
         docStatus, requisitionDocName || null, isBACS ? 'BACS Invoice requested by school' : 'Card payment captured via Stripe checkout'
       );
@@ -205,7 +207,7 @@ export async function POST(request: Request) {
 
       for (let i = 0; i < validatedItems.length; i++) {
         const item = validatedItems[i];
-        insertItem.run(
+        await insertItem.run(
           `item-${orderId}-${i + 1}`,
           orderId,
           item.productId,
@@ -221,7 +223,7 @@ export async function POST(request: Request) {
 
       // If BACS Invoice, generate formal invoice record
       if (isBACS) {
-        const invCount = db.prepare('SELECT count(*) as count FROM invoices').get() as { count: number };
+        const invCount = await db.prepare('SELECT count(*) as count FROM invoices').get() as { count: number };
         const invSeq = (invCount?.count || 0) + 104;
         const invoiceNumber = `INV-2026-${invSeq.toString().padStart(5, '0')}`;
         const issueDate = new Date().toISOString().split('T')[0];
@@ -229,7 +231,7 @@ export async function POST(request: Request) {
         dueDateObj.setDate(dueDateObj.getDate() + 30); // 30 days credit terms
         const dueDate = dueDateObj.toISOString().split('T')[0];
 
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO invoices (
             id, invoice_number, order_id, organisation_id, school_id, issue_date, due_date, po_number,
             subtotal, vat_total, total_amount, amount_paid, status, bacs_bank_name, bacs_account_name,
@@ -258,7 +260,7 @@ export async function POST(request: Request) {
       }
 
       // Audit Log
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, user_name, action, entity_type, entity_id, details)
         VALUES (?, ?, 'ORDER_CREATED', 'order', ?, ?)
       `).run(
@@ -267,7 +269,7 @@ export async function POST(request: Request) {
         orderId,
         `Order ${orderReference} created (${paymentMethod.toUpperCase()}). Total: £${totalAmount.toFixed(2)}`
       );
-    })();
+    });
 
     // 5. Send Order Confirmation Email
     const emailSubject = isBACS

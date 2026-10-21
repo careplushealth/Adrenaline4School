@@ -1,5 +1,7 @@
 import db from './db';
 import crypto from 'crypto';
+import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 export interface SendEmailOptions {
   to: string;
@@ -10,31 +12,265 @@ export interface SendEmailOptions {
   html: string;
 }
 
-export function sendEmail({
+// Lazy-initialised email clients
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
+function getSmtpTransporter() {
+  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+  }
+  return null;
+}
+
+export async function sendEmail({
   to,
   subject,
   templateType,
   relatedEntityType,
   relatedEntityId,
   html,
-}: SendEmailOptions): { success: boolean; id: string } {
+}: SendEmailOptions): Promise<{ success: boolean; id: string; provider?: string }> {
   const id = `email-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+  const fromAddress = process.env.EMAIL_FROM || 'Adrenaline4Schools <notifications@adrenaline4schools.co.uk>';
+
+  let providerUsed = 'database_simulated';
+  let deliveryStatus = 'sent';
 
   try {
+    // 1. Try Resend if configured
+    if (resend) {
+      try {
+        const { error } = await resend.emails.send({
+          from: fromAddress,
+          to: [to],
+          subject,
+          html,
+        });
+        if (error) {
+          console.error('[Resend Error]', error);
+          deliveryStatus = 'failed_provider';
+        } else {
+          providerUsed = 'resend';
+        }
+      } catch (err: any) {
+        console.error('[Resend Exception]', err);
+        deliveryStatus = 'failed_provider';
+      }
+    } 
+    // 2. Otherwise try SMTP transporter if configured
+    else {
+      const transporter = getSmtpTransporter();
+      if (transporter) {
+        try {
+          await transporter.sendMail({
+            from: fromAddress,
+            to,
+            subject,
+            html,
+          });
+          providerUsed = 'smtp';
+        } catch (err: any) {
+          console.error('[SMTP Exception]', err);
+          deliveryStatus = 'failed_provider';
+        }
+      }
+    }
+
+    // 3. Always log to Neon database email_logs
     const stmt = db.prepare(`
       INSERT INTO email_logs (
         id, recipient_email, subject, template_type, related_entity_type, related_entity_id, status, body_html
-      ) VALUES (?, ?, ?, ?, ?, ?, 'sent', ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    stmt.run(id, to, subject, templateType, relatedEntityType || null, relatedEntityId || null, html);
+    await stmt.run(id, to, subject, templateType, relatedEntityType || null, relatedEntityId || null, deliveryStatus, html);
 
-    console.log(`[EMAIL DISPATCHED] To: ${to} | Subject: ${subject} | Template: ${templateType}`);
-    return { success: true, id };
+    console.log(`[EMAIL DISPATCHED] To: ${to} | Subject: ${subject} | Provider: ${providerUsed} | Status: ${deliveryStatus}`);
+    return { success: deliveryStatus === 'sent', id, provider: providerUsed };
   } catch (error: any) {
-    console.error('Error logging email dispatch:', error);
-    return { success: false, id };
+    console.error('Error logging/dispatching email:', error);
+    return { success: false, id, provider: 'error' };
   }
+}
+
+/**
+ * Send official 6-digit School Portal Verification Code
+ */
+export async function sendVerificationEmail({
+  to,
+  code,
+  schoolName,
+}: {
+  to: string;
+  code: string;
+  schoolName: string;
+}) {
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #0f766e; padding: 24px; text-align: left;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: bold; letter-spacing: -0.5px;">Adrenaline4Schools</h1>
+        <p style="color: #ccfbf1; margin: 4px 0 0 0; font-size: 13px;">Official NHS & DfE School Allergy Compliance Portal</p>
+      </div>
+
+      <div style="padding: 28px 24px;">
+        <h2 style="font-size: 18px; color: #0f172a; margin-top: 0; font-weight: 700;">Verify Your School Portal Account</h2>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+          Thank you for registering <strong>${schoolName}</strong> on the Adrenaline4Schools Medical Stock Portal.
+        </p>
+
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+          Please enter the following 6-digit security code into your portal verification screen to activate your account:
+        </p>
+
+        <div style="margin: 28px 0; text-align: center;">
+          <div style="display: inline-block; background-color: #f0fdfa; border: 2px dashed #0d9488; border-radius: 8px; padding: 16px 36px;">
+            <span style="font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #0f766e; font-family: monospace;">
+              ${code}
+            </span>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 8px;">Valid for 24 hours. Do not share this code.</p>
+        </div>
+
+        <div style="background-color: #f8fafc; border-left: 4px solid #0d9488; padding: 12px 16px; border-radius: 4px; font-size: 13px; color: #334155;">
+          <strong>Why is this required?</strong><br/>
+          In compliance with UK statutory guidance on medicines in schools and GPhC dispensing standards, all portal users must verify their school institutional domain.
+        </div>
+      </div>
+
+      <div style="background-color: #f1f5f9; padding: 16px 24px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+        <p style="margin: 0;">Adrenaline4Schools Ltd &bull; GPhC Registered Pharmacy Partner &bull; Official UK DfE School Supplier</p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Your Adrenaline4Schools Verification Code: ${code}`,
+    templateType: 'email_verification',
+    html,
+  });
+}
+
+/**
+ * Send Password Reset Code
+ */
+export async function sendPasswordResetEmail({
+  to,
+  code,
+}: {
+  to: string;
+  code: string;
+}) {
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #0f766e; padding: 24px; text-align: left;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: bold;">Adrenaline4Schools</h1>
+        <p style="color: #ccfbf1; margin: 4px 0 0 0; font-size: 13px;">School Security Management</p>
+      </div>
+      <div style="padding: 28px 24px;">
+        <h2 style="font-size: 18px; color: #0f172a; margin-top: 0;">Password Reset Request</h2>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+          A password reset was requested for your school portal account. Use the security code below to reset your password:
+        </p>
+        <div style="margin: 24px 0; text-align: center;">
+          <div style="display: inline-block; background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 14px 32px;">
+            <span style="font-size: 28px; font-weight: 800; letter-spacing: 6px; color: #0f172a; font-family: monospace;">
+              ${code}
+            </span>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 8px;">Code expires in 60 minutes.</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Adrenaline4Schools Password Reset Code: ${code}`,
+    templateType: 'password_reset',
+    html,
+  });
+}
+
+/**
+ * Send Order & Invoice Confirmation Email
+ */
+export async function sendOrderConfirmationEmail({
+  to,
+  orderReference,
+  schoolName,
+  total,
+  paymentMethod,
+}: {
+  to: string;
+  orderReference: string;
+  schoolName: string;
+  total: number;
+  paymentMethod: string;
+}) {
+  const isInvoice = paymentMethod.includes('bacs') || paymentMethod.includes('invoice');
+  const paymentBadge = isInvoice
+    ? '30-Day Official School Invoice (BACS)'
+    : 'Paid Online via Stripe (Card / Apple Pay)';
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #0f766e; padding: 24px; text-align: left;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: bold;">Adrenaline4Schools</h1>
+        <p style="color: #ccfbf1; margin: 4px 0 0 0; font-size: 13px;">GPhC Registered Pharmacy Dispensing</p>
+      </div>
+      <div style="padding: 28px 24px;">
+        <h2 style="font-size: 18px; color: #0f172a; margin-top: 0;">Order Confirmation &mdash; Ref: ${orderReference}</h2>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+          Thank you for your order for <strong>${schoolName}</strong>. Your school emergency adrenaline supply request has been received by our pharmacy dispensing team.
+        </p>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin: 20px 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;"><strong>Order Reference:</strong></td>
+              <td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${orderReference}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;"><strong>School:</strong></td>
+              <td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${schoolName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;"><strong>Payment Method:</strong></td>
+              <td style="padding: 6px 0; color: #0f766e; font-weight: 600;">${paymentBadge}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;"><strong>Order Total:</strong></td>
+              <td style="padding: 6px 0; color: #0f172a; font-weight: 700; font-size: 15px;">&pound;${total.toFixed(2)}</td>
+            </tr>
+          </table>
+        </div>
+
+        <p style="font-size: 13px; color: #475569; line-height: 1.6;">
+          All devices will be dispatched via tracked temperature-controlled cold-chain medical courier with maximum expiry dating and automatic batch logging.
+        </p>
+      </div>
+      <div style="background-color: #f1f5f9; padding: 16px 24px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+        <p style="margin: 0;">Adrenaline4Schools Ltd &bull; Registered Dispensing Pharmacy</p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Order Confirmed: ${orderReference} - Adrenaline4Schools`,
+    templateType: 'order_confirmation',
+    html,
+  });
 }
 
 export function generateExpiryReminderEmail({

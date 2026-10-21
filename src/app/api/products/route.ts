@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY display_order ASC';
 
-    const products = db.prepare(query).all(...params);
+    const products = await db.prepare(query).all(...params);
     return NextResponse.json({ success: true, products });
   } catch (error: any) {
     console.error('API /products error:', error);

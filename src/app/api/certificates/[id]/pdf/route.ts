@@ -6,10 +6,10 @@ import { generateCertificatePDF } from '@/lib/pdf-service';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const certId = params.id;
-    const cert = db.prepare(`
+    const cert = (await db.prepare(`
       SELECT * FROM certificates 
       WHERE id = ? OR certificate_number = ?
-    `).get(certId, certId) as any;
+    `).get(certId, certId)) as any;
 
     if (!cert) {
       return NextResponse.json({ success: false, error: 'Certificate not found' }, { status: 404 });

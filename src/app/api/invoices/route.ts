@@ -35,7 +35,7 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY inv.issue_date DESC';
 
-    const invoices = db.prepare(query).all(...params);
+    const invoices = await db.prepare(query).all(...params);
     return NextResponse.json({ success: true, invoices });
   } catch (error: any) {
     console.error('API GET /invoices error:', error);
@@ -56,19 +56,19 @@ export async function PATCH(request: Request) {
       adminUserName = 'Finance Admin',
     } = body;
 
-    const invoice = db.prepare('SELECT * FROM invoices WHERE id = ? OR invoice_number = ?').get(invoiceId, invoiceId) as any;
+    const invoice = await db.prepare('SELECT * FROM invoices WHERE id = ? OR invoice_number = ?').get(invoiceId, invoiceId) as any;
     if (!invoice) {
       return NextResponse.json({ success: false, error: 'Invoice not found' }, { status: 404 });
     }
 
-    db.transaction(() => {
+    await db.transaction(async () => {
       if (action === 'record_payment' || action === 'mark_paid') {
         const paymentAmount = amount !== undefined ? parseFloat(amount) : invoice.total_amount;
         const newAmountPaid = invoice.amount_paid + paymentAmount;
         const isFullyPaid = newAmountPaid >= invoice.total_amount;
 
         // Record in invoice_payments table
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO invoice_payments (
             id, invoice_id, order_id, amount, payment_method, reference, notes
           ) VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -83,7 +83,7 @@ export async function PATCH(request: Request) {
         );
 
         // Update invoice
-        db.prepare(`
+        await db.prepare(`
           UPDATE invoices 
           SET 
             amount_paid = ?,
@@ -95,7 +95,7 @@ export async function PATCH(request: Request) {
 
         // Update associated order payment_status to 'paid'
         if (isFullyPaid) {
-          db.prepare(`
+          await db.prepare(`
             UPDATE orders 
             SET 
               payment_status = 'paid',
@@ -109,7 +109,7 @@ export async function PATCH(request: Request) {
         }
 
         // Audit log
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO audit_logs (id, user_name, action, entity_type, entity_id, details)
           VALUES (?, ?, 'INVOICE_PAYMENT_RECORDED', 'invoice', ?, ?)
         `).run(
@@ -119,7 +119,7 @@ export async function PATCH(request: Request) {
           `Recorded payment of £${paymentAmount.toFixed(2)} on invoice ${invoice.invoice_number} via ${paymentMethod}`
         );
       } else if (action === 'send_reminder') {
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO email_logs (id, recipient_email, subject, template_type, related_entity_type, related_entity_id, status, body_html)
           VALUES (?, ?, ?, 'bacs_payment_reminder', 'invoice', ?, 'sent', ?)
         `).run(
@@ -130,7 +130,7 @@ export async function PATCH(request: Request) {
           `<p>This is a polite reminder that invoice ${invoice.invoice_number} for £${invoice.total_amount.toFixed(2)} remains due.</p>`
         );
       }
-    })();
+    });
 
     return NextResponse.json({ success: true, message: 'Invoice updated successfully' });
   } catch (error: any) {

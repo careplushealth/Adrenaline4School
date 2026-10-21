@@ -65,13 +65,13 @@ export default function AdminSidebar() {
             <div className="bg-white p-2 rounded-xl shadow-md border border-slate-200/20 flex items-center justify-center">
               <img
                 src="/logo.png"
-                alt="Adrenaline4School"
+                alt="Adrenaline4Schools"
                 className="h-8 w-auto object-contain"
               />
             </div>
           </Link>
           <div className="flex items-center justify-between px-1">
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-emerald-300 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/30">
               Admin Portal
             </span>
             <span className="text-[10px] text-slate-400 font-medium">GPhC Secure</span>
@@ -90,11 +90,11 @@ export default function AdminSidebar() {
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-amber-400 text-navy-950 shadow-md shadow-amber-400/20 font-black'
+                    ? 'bg-[#096556] text-white shadow-md shadow-[#096556]/20 font-bold'
                     : 'text-slate-400 hover:text-white hover:bg-navy-900/80'
                 }`}
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-navy-950' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             );

@@ -4,8 +4,8 @@ import { ShieldAlert, Clock, UserCheck } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminAuditPage() {
-  const auditLogs = db.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 100').all() as any[];
+export default async function AdminAuditPage() {
+  const auditLogs = (await db.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 100').all()) as any[];
 
   return (
     <div className="p-6 sm:p-10 max-w-7xl mx-auto space-y-6">

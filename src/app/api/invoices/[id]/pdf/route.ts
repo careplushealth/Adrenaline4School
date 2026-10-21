@@ -6,7 +6,7 @@ import { generateInvoicePDF } from '@/lib/pdf-service';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const invoiceId = params.id;
-    const invoice = db.prepare(`
+    const invoice = await db.prepare(`
       SELECT 
         inv.*,
         s.name as school_name,
@@ -31,7 +31,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ success: false, error: 'Invoice not found' }, { status: 404 });
     }
 
-    const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(invoice.order_id) as any[];
+    const items = await db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(invoice.order_id) as any[];
     const doc = generateInvoicePDF(invoice, { ...invoice, items });
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
 

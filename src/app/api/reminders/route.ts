@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const filter = searchParams.get('filter'); // 'all', '12m', '6m', '3m', '1m', 'expired'
 
-    const supplies = db.prepare(`
+    const supplies = await db.prepare(`
       SELECT 
         sup.*,
         s.name as school_name,
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     `).all() as any[];
 
     // Fetch reminders and logs
-    const reminders = db.prepare(`
+    const reminders = await db.prepare(`
       SELECT 
         r.*,
         s.name as school_name,
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
       ORDER BY r.scheduled_date ASC
     `).all();
 
-    const emailLogs = db.prepare(`
+    const emailLogs = await db.prepare(`
       SELECT * FROM email_logs 
       WHERE template_type LIKE '%expiry%' OR template_type LIKE '%reminder%'
       ORDER BY sent_at DESC LIMIT 50
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     const { action, supplyId, reminderId, newDate } = body;
 
     if (action === 'trigger_sweep') {
-      const result = runExpiryReminderSweep();
+      const result = await runExpiryReminderSweep();
       return NextResponse.json({
         success: true,
         message: `Scheduler completed: ${result.sent} emails sent, ${result.failed} failed out of ${result.processed} due reminders.`,
@@ -76,12 +76,12 @@ export async function POST(request: Request) {
     }
 
     if (action === 'send_manual' && supplyId) {
-      const result = sendManualReminder(supplyId);
+      const result = await sendManualReminder(supplyId);
       return NextResponse.json(result);
     }
 
     if (action === 'reschedule' && reminderId && newDate) {
-      db.prepare(`
+      await db.prepare(`
         UPDATE expiry_reminders 
         SET scheduled_date = ?, status = 'pending', updated_at = CURRENT_TIMESTAMP
         WHERE id = ?

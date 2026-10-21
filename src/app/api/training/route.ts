@@ -8,19 +8,20 @@ export async function GET(request: Request) {
     const courseId = searchParams.get('courseId');
 
     if (courseId) {
-      const course = db.prepare('SELECT * FROM training_courses WHERE id = ? OR slug = ?').get(courseId, courseId) as any;
+      const course = (await db.prepare('SELECT * FROM training_courses WHERE id = ? OR slug = ?').get(courseId, courseId)) as any;
       if (!course) {
         return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
       }
 
-      const modules = db.prepare('SELECT * FROM training_modules WHERE course_id = ? ORDER BY display_order ASC').all(course.id) as any[];
-      const getLessons = db.prepare('SELECT * FROM training_lessons WHERE module_id = ? ORDER BY display_order ASC');
-      const modulesWithLessons = modules.map((m) => ({
-        ...m,
-        lessons: getLessons.all(m.id),
-      }));
+      const modules = (await db.prepare('SELECT * FROM training_modules WHERE course_id = ? ORDER BY display_order ASC').all(course.id)) as any[];
+      const modulesWithLessons = await Promise.all(
+        modules.map(async (m) => ({
+          ...m,
+          lessons: await db.prepare('SELECT * FROM training_lessons WHERE module_id = ? ORDER BY display_order ASC').all(m.id),
+        }))
+      );
 
-      const questions = db.prepare('SELECT * FROM quiz_questions WHERE course_id = ? ORDER BY display_order ASC').all(course.id);
+      const questions = await db.prepare('SELECT * FROM quiz_questions WHERE course_id = ? ORDER BY display_order ASC').all(course.id);
 
       return NextResponse.json({
         success: true,
@@ -33,8 +34,8 @@ export async function GET(request: Request) {
     }
 
     // List all courses
-    const courses = db.prepare('SELECT * FROM training_courses ORDER BY display_order ASC').all();
-    const enrolments = db.prepare(`
+    const courses = await db.prepare('SELECT * FROM training_courses ORDER BY display_order ASC').all();
+    const enrolments = await db.prepare(`
       SELECT 
         e.*,
         u.name as learner_name,
@@ -68,12 +69,12 @@ export async function POST(request: Request) {
       answers, // { [questionId]: selectedOptionIndex }
     } = body;
 
-    const course = db.prepare('SELECT * FROM training_courses WHERE id = ? OR slug = ?').get(courseId, courseId) as any;
+    const course = (await db.prepare('SELECT * FROM training_courses WHERE id = ? OR slug = ?').get(courseId, courseId)) as any;
     if (!course) {
       return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
     }
 
-    const questions = db.prepare('SELECT * FROM quiz_questions WHERE course_id = ?').all(course.id) as any[];
+    const questions = (await db.prepare('SELECT * FROM quiz_questions WHERE course_id = ?').all(course.id)) as any[];
     if (questions.length === 0) {
       return NextResponse.json({ success: false, error: 'No quiz questions for this course' }, { status: 400 });
     }
@@ -98,12 +99,12 @@ export async function POST(request: Request) {
 
     // Resolve or create user
     let userId = 'usr-learner';
-    const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(learnerEmail) as any;
+    const existingUser = (await db.prepare('SELECT id FROM users WHERE email = ?').get(learnerEmail)) as any;
     if (existingUser) {
       userId = existingUser.id;
     } else {
       userId = `usr-${Date.now()}`;
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO users (id, name, email, password_hash, role)
         VALUES (?, ?, ?, 'demoHash', 'school_staff')
       `).run(userId, learnerName, learnerEmail);
@@ -114,12 +115,12 @@ export async function POST(request: Request) {
 
     if (passed) {
       certificateId = `cert-${Date.now()}`;
-      const certCount = db.prepare('SELECT count(*) as count FROM certificates').get() as { count: number };
+      const certCount = (await db.prepare('SELECT count(*) as count FROM certificates').get()) as { count: number };
       const certSeq = (certCount?.count || 0) + 105;
       certificateNumber = `CERT-2026-${certSeq.toString().padStart(5, '0')}`;
       const today = new Date().toISOString().split('T')[0];
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO certificates (
           id, certificate_number, user_id, course_id, recipient_name, school_name, course_title, score_percentage, issued_date
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -138,7 +139,7 @@ export async function POST(request: Request) {
 
     // Record enrolment
     const enrolmentId = `enrol-${Date.now()}`;
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO training_enrolments (
         id, user_id, course_id, status, quiz_score, passed, completed_at, certificate_id
       ) VALUES (?, ?, ?, 'completed', ?, ?, CURRENT_TIMESTAMP, ?)

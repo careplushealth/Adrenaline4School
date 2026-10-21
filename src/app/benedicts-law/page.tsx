@@ -20,7 +20,7 @@ export default function BenedictsLawPage() {
         />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto mb-5 text-amber-400">
+          <div className="w-14 h-14 rounded-2xl bg-[#096556]/20 border border-[#096556]/40 flex items-center justify-center mx-auto mb-5 text-emerald-300">
             <Scale className="w-7 h-7" />
           </div>
           <span className="text-teal-300 text-xs font-bold uppercase tracking-widest bg-teal-500/20 px-3.5 py-1 rounded-full border border-teal-500/30">
@@ -87,7 +87,7 @@ export default function BenedictsLawPage() {
               <h2 className="text-2xl font-serif font-normal text-forest-950 mb-4">What is Benedict&apos;s Law?</h2>
               <div className="bg-white/80 border border-stone-200/80 p-5 rounded-2xl mb-6 shadow-xs">
                 <p className="text-sm text-forest-950 font-serif font-medium mb-2 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-gold-600" />
+                  <AlertTriangle className="w-4 h-4 text-[#096556]" />
                   In memory of Benedict Blythe
                 </p>
                 <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">

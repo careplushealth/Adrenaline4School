@@ -105,19 +105,19 @@ export default function SecureReorderPage() {
   const grandTotal = (supply.price * quantity) + vatTotal;
 
   return (
-    <div className="min-h-screen bg-ivory text-forest-900 py-16 px-4 font-sans">
+    <div className="min-h-screen bg-[#f8fbfb] text-[#0c2340] py-16 px-4 font-sans">
       <div className="max-w-3xl mx-auto">
         {/* Reorder Header */}
-        <div className="bg-forest-950 text-stone-200 rounded-t-3xl p-6 sm:p-8 flex items-center justify-between gap-4 border border-forest-900/60">
+        <div className="bg-[#0c2340] text-stone-200 rounded-t-3xl p-6 sm:p-8 flex items-center justify-between gap-4 border border-[#0c2340]">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-              <BellRing className="w-6 h-6 text-gold-300" />
+              <BellRing className="w-6 h-6 text-emerald-300" />
             </div>
             <div>
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-gold-300 bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/20">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-300 bg-emerald-400/10 px-2.5 py-0.5 rounded-full border border-emerald-400/20">
                 Verified Expiry Reorder Portal
               </span>
-              <h1 className="text-2xl font-serif font-normal text-ivory mt-1">Replace Expiring Stock</h1>
+              <h1 className="text-2xl font-serif font-bold text-white mt-1">Replace Expiring Stock</h1>
             </div>
           </div>
         </div>
@@ -214,9 +214,9 @@ export default function SecureReorderPage() {
           {/* Action Button */}
           <button
             onClick={handleConfirmReorder}
-            className="w-full py-3.5 rounded-full bg-gold-400 hover:bg-gold-300 text-forest-950 font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-xs"
+            className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-[#096556]/20"
           >
-            <ShieldCheck className="w-4 h-4 text-forest-950" />
+            <ShieldCheck className="w-4 h-4 text-white" />
             <span>Confirm Reorder & Proceed to Checkout</span>
             <ArrowRight className="w-4 h-4" />
           </button>

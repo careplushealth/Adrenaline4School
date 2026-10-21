@@ -6,7 +6,7 @@ import crypto from 'crypto';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const orderId = params.id;
-    const order = db.prepare(`
+    const order = await db.prepare(`
       SELECT 
         o.*,
         s.name as school_name,
@@ -29,8 +29,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
     }
 
-    const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
-    const supplyRecords = db.prepare('SELECT * FROM school_supply_records WHERE order_id = ?').all(order.id);
+    const items = await db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
+    const supplyRecords = await db.prepare('SELECT * FROM school_supply_records WHERE order_id = ?').all(order.id);
 
     return NextResponse.json({
       success: true,
@@ -61,14 +61,14 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       adminUserName = 'Admin User',
     } = body;
 
-    const existingOrder = db.prepare('SELECT * FROM orders WHERE id = ? OR order_reference = ?').get(orderId, orderId) as any;
+    const existingOrder = await db.prepare('SELECT * FROM orders WHERE id = ? OR order_reference = ?').get(orderId, orderId) as any;
     if (!existingOrder) {
       return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
     }
 
     const realOrderId = existingOrder.id;
 
-    db.transaction(() => {
+    await db.transaction(async () => {
       // 1. Update order fields
       const updates: string[] = [];
       const values: any[] = [];
@@ -116,7 +116,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
       if (updates.length > 0) {
         values.push(realOrderId);
-        db.prepare(`UPDATE orders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+        await db.prepare(`UPDATE orders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
       }
 
       // 2. Process batch allocations and register school supply records
@@ -126,7 +126,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
           const reorderToken = `reorder-${crypto.randomBytes(12).toString('hex')}`;
 
           // Create supply record for the school
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO school_supply_records (
               id, order_id, school_id, product_id, batch_record_id, batch_number, expiry_date,
               quantity_supplied, supplied_date, status, reorder_token, notes
@@ -146,7 +146,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
           // Update batch allocated quantity in batch_records
           if (alloc.batchRecordId) {
-            db.prepare(`
+            await db.prepare(`
               UPDATE batch_records 
               SET quantity_allocated = quantity_allocated + ?
               WHERE id = ?
@@ -162,7 +162,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
             schedDate.setMonth(schedDate.getMonth() - interval);
             const schedDateStr = schedDate.toISOString().split('T')[0];
 
-            db.prepare(`
+            await db.prepare(`
               INSERT INTO expiry_reminders (
                 id, supply_record_id, school_id, interval_months, scheduled_date, recipient_email, status, reorder_token
               ) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
@@ -180,7 +180,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       }
 
       // Audit Log
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, user_name, action, entity_type, entity_id, details)
         VALUES (?, ?, 'ORDER_UPDATED', 'order', ?, ?)
       `).run(
@@ -189,7 +189,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         realOrderId,
         `Updated order ${existingOrder.order_reference} status: ${orderStatus || 'N/A'}, pharmacy: ${pharmacyReviewStatus || 'N/A'}`
       );
-    })();
+    });
 
     return NextResponse.json({ success: true, message: 'Order updated successfully' });
   } catch (error: any) {

@@ -61,7 +61,7 @@ export default function Footer() {
             <div className="bg-white p-2.5 rounded-2xl shadow-md border border-stone-200/20 inline-flex items-center">
               <img
                 src="/logo.png"
-                alt="Adrenaline4School"
+                alt="Adrenaline4Schools"
                 className="h-8 sm:h-9 w-auto object-contain"
               />
             </div>
@@ -117,7 +117,7 @@ export default function Footer() {
               <li><Link href="/portal" className="hover:text-teal-300 transition-colors">School Customer Portal</Link></li>
               <li><Link href="/portal/expiries" className="hover:text-teal-300 transition-colors">Registered School Stock</Link></li>
               <li><Link href="/portal/invoices" className="hover:text-teal-300 transition-colors">BACS Invoices & Remittance</Link></li>
-              <li><Link href="/admin" className="text-teal-300 hover:text-white transition-colors">Staff Management Gateway</Link></li>
+              <li><Link href="/admin" className="hover:text-teal-300 transition-colors inline-flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-teal-400" /> Internal Access</Link></li>
               <li><Link href="/contact" className="hover:text-teal-300 transition-colors">Contact Support</Link></li>
             </ul>
           </div>
@@ -137,11 +137,11 @@ export default function Footer() {
         <div className="pt-8 border-t border-forest-900/80 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-400">
           <p>© {new Date().getFullYear()} Adrenaline4Schools Ltd. All rights reserved. Registered in England & Wales.</p>
           <div className="flex items-center gap-5 text-stone-400">
-            <span>Privacy Policy</span>
+            <Link href="/privacy" className="hover:text-teal-300 transition-colors">Privacy Policy</Link>
             <span>•</span>
-            <span>Terms of Supply</span>
+            <Link href="/terms" className="hover:text-teal-300 transition-colors">Terms of Supply</Link>
             <span>•</span>
-            <span>BACS Payment Terms</span>
+            <Link href="/terms" className="hover:text-teal-300 transition-colors">BACS Payment Terms</Link>
             <span>•</span>
             <span>GPhC Pharmacy Registration #1092812</span>
           </div>

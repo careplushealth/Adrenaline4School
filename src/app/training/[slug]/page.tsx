@@ -113,11 +113,11 @@ export default function CoursePage() {
             <ArrowLeft className="w-4 h-4" /> All Training Courses
           </Link>
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-sage-800/50 border border-sage-700/60 flex items-center justify-center shrink-0 text-gold-300">
+            <div className="w-14 h-14 rounded-2xl bg-[#096556]/20 border border-[#096556]/40 flex items-center justify-center shrink-0 text-emerald-300">
               <BookOpen className="w-7 h-7" />
             </div>
             <div>
-              <span className="text-gold-300 text-xs font-semibold uppercase tracking-wider bg-gold-400/10 px-3 py-0.5 rounded-full border border-gold-400/20">{course.category}</span>
+              <span className="text-emerald-300 text-xs font-semibold uppercase tracking-wider bg-emerald-400/10 px-3 py-0.5 rounded-full border border-emerald-400/20">{course.category}</span>
               <h1 className="text-2xl sm:text-3xl font-serif font-normal text-ivory mt-2">{course.title}</h1>
               <div className="flex flex-wrap gap-4 mt-3 text-xs text-stone-300">
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-sage-400" />{course.duration_minutes} minutes</span>

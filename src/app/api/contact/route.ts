@@ -13,13 +13,13 @@ export async function POST(request: Request) {
     }
 
     const id = `contact-${Date.now()}`;
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO contact_submissions (id, name, email, school_name, category, order_reference, message)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(id, name, email, schoolName || null, category || 'General Enquiry', orderReference || null, message);
 
     // Send confirmation email
-    sendEmail({
+    await sendEmail({
       to: email,
       subject: `Thank you for contacting Adrenaline4Schools [Ref: ${id}]`,
       templateType: 'contact_acknowledgement',
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const submissions = db.prepare('SELECT * FROM contact_submissions ORDER BY created_at DESC').all();
+    const submissions = await db.prepare('SELECT * FROM contact_submissions ORDER BY created_at DESC').all();
     return NextResponse.json({ success: true, submissions });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

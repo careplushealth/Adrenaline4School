@@ -26,8 +26,8 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY s.name ASC';
 
-    const schools = db.prepare(query).all(...params);
-    const organisations = db.prepare('SELECT * FROM organisations ORDER BY name ASC').all();
+    const schools = await db.prepare(query).all(...params);
+    const organisations = await db.prepare('SELECT * FROM organisations ORDER BY name ASC').all();
 
     return NextResponse.json({ success: true, schools, organisations });
   } catch (error: any) {
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     } = body;
 
     const id = `sch-${Date.now()}`;
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO schools (
         id, organisation_id, urn, name, phase, address_line1, address_line2, town_city, postcode,
         headteacher_name, headteacher_email, designated_allergy_lead, phone

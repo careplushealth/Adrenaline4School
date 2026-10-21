@@ -4,7 +4,7 @@ import db from '@/lib/db';
 
 export async function GET() {
   try {
-    const batches = db.prepare(`
+    const batches = await db.prepare(`
       SELECT 
         b.*,
         p.name as product_name,
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     }
 
     const id = `batch-${Date.now()}`;
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO batch_records (
         id, product_id, batch_number, manufacturer, expiry_date, quantity_received, quantity_allocated, supplier_ref, notes
       ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)
