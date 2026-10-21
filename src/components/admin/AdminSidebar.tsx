@@ -11,6 +11,7 @@ import {
   BellRing,
   GraduationCap,
   Building2,
+  School,
   FileEdit,
   BarChart3,
   Settings,
@@ -28,6 +29,7 @@ export default function AdminSidebar() {
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'UK Schools Directory', href: '/admin/schools', icon: School },
     { name: 'Orders & Requisitions', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Batches & Expiry DB', href: '/admin/batches', icon: Layers },
     { name: 'Invoices & BACS Payments', href: '/admin/invoices', icon: FileText },
