@@ -28,6 +28,7 @@ import {
   RefreshCw,
   ShoppingBag,
   Info,
+  AlertCircle,
 } from 'lucide-react';
 
 interface SchoolRecord {
@@ -72,6 +73,7 @@ export default function AdminSchoolsDirectoryPage() {
   const [limit, setLimit] = useState(25);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryStats>({
     totalAll: 27180,
     totalPrimary: 0,
@@ -123,9 +125,13 @@ export default function AdminSchoolsDirectoryPage() {
         setTotalCount(data.pagination?.total || 0);
         setTotalPages(data.pagination?.totalPages || 1);
         if (data.summary) setSummary(data.summary);
+        setApiError(null);
+      } else {
+        setApiError(data.error || 'Failed to query schools database.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load schools directory:', err);
+      setApiError(err.message || 'Network error fetching schools directory.');
     } finally {
       setLoading(false);
     }
@@ -189,6 +195,29 @@ export default function AdminSchoolsDirectoryPage() {
               </button>
             </div>
           </div>
+
+          {/* Error Banner */}
+          {apiError && (
+            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="font-bold text-white flex items-center gap-1.5">
+                  <AlertCircle className="w-4 h-4 text-rose-400" />
+                  <span>Database Connection Notice</span>
+                </p>
+                <p className="font-mono text-[11px] text-rose-300">{apiError}</p>
+                <p className="text-slate-400 text-[11px]">
+                  If running on a deployed host (e.g. Vercel), ensure <code className="bg-slate-800 text-emerald-400 px-1 py-0.5 rounded font-mono">DATABASE_URL</code> is added in your hosting dashboard under Environment Variables.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={fetchSchools}
+                className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shrink-0 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
 
           {/* Metric KPI Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
