@@ -196,8 +196,15 @@ export default function AdminBatchesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredSupplies.map((s) => (
-                    <tr key={s.id} className="hover:bg-slate-50 transition-colors">
+                  {filteredSupplies.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center text-slate-400">
+                        No school supplies recorded yet. Auto-injector supplies appear here automatically when school orders are processed.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredSupplies.map((s) => (
+                      <tr key={s.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-3.5 px-4 font-bold text-navy-950">
                         {s.school_name}
                         <span className="block text-[10px] text-slate-400 font-normal">Order: {s.order_reference}</span>
@@ -247,7 +254,7 @@ export default function AdminBatchesPage() {
                         )}
                       </td>
                     </tr>
-                  ))}
+                  )))}
                 </tbody>
               </table>
             </div>
@@ -272,8 +279,15 @@ export default function AdminBatchesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {batches.map((b: any) => (
-                <tr key={b.id} className="hover:bg-slate-50">
+              {batches.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-12 text-center text-slate-400">
+                    No manufacturer batches logged yet. Click &quot;Record New Batch&quot; above to log pharmacy delivery stock.
+                  </td>
+                </tr>
+              ) : (
+                batches.map((b: any) => (
+                  <tr key={b.id} className="hover:bg-slate-50">
                   <td className="py-3.5 px-4 font-mono font-bold text-navy-950">{b.batch_number}</td>
                   <td className="py-3.5 px-4 font-bold text-navy-900">{b.product_name} ({b.strength})</td>
                   <td className="py-3.5 px-4 text-slate-600">{b.manufacturer}</td>
@@ -287,7 +301,7 @@ export default function AdminBatchesPage() {
                     </span>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

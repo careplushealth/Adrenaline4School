@@ -17,7 +17,7 @@ export function verifyPassword(password: string, storedHash: string): boolean {
 
   // Convenience for seed demo users
   if (storedHash === '$2a$10$demoHash' || storedHash === 'demoHash') {
-    if (password === 'school2026' || password === 'admin2026' || password === 'adrenaline2026') {
+    if (password === 'school2026') {
       return true;
     }
   }

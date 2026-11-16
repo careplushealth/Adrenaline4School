@@ -106,18 +106,18 @@ export default function HeroSceneIllustration() {
           />
 
           {/* Clock Dial */}
-          <circle cx="285" cy="74" r="14" fill="#ffffff" stroke="#0c2340" strokeWidth="2.5" />
+          <circle cx="285" cy="74" r="14" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2.5" />
           {/* Clock Hands (Pointing at 9:00) */}
-          <line x1="285" y1="74" x2="285" y2="65" stroke="#0c2340" strokeWidth="2" strokeLinecap="round" />
-          <line x1="285" y1="74" x2="277" y2="74" stroke="#0c2340" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="285" cy="74" r="1.5" fill="#0c2340" />
+          <line x1="285" y1="74" x2="285" y2="65" stroke="#1d1d1f" strokeWidth="2" strokeLinecap="round" />
+          <line x1="285" y1="74" x2="277" y2="74" stroke="#1d1d1f" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="285" cy="74" r="1.5" fill="#1d1d1f" />
 
           {/* SCHOOL Header Plaque */}
-          <rect x="260" y="98" width="50" height="15" rx="3" fill="#ffffff" stroke="#0c2340" strokeWidth="1.5" />
+          <rect x="260" y="98" width="50" height="15" rx="3" fill="#ffffff" stroke="#1d1d1f" strokeWidth="1.5" />
           <text
             x="285"
             y="109"
-            fill="#0c2340"
+            fill="#1d1d1f"
             fontSize="8"
             fontWeight="900"
             textAnchor="middle"
@@ -128,42 +128,42 @@ export default function HeroSceneIllustration() {
           </text>
 
           {/* Double Entrance Doors */}
-          <rect x="270" y="170" width="30" height="50" rx="2" fill="#0284c7" stroke="#0c2340" strokeWidth="2" />
-          <line x1="285" y1="170" x2="285" y2="220" stroke="#0c2340" strokeWidth="1.5" />
+          <rect x="270" y="170" width="30" height="50" rx="2" fill="#0284c7" stroke="#1d1d1f" strokeWidth="2" />
+          <line x1="285" y1="170" x2="285" y2="220" stroke="#1d1d1f" strokeWidth="1.5" />
           <circle cx="282" cy="195" r="1.5" fill="#ffffff" />
           <circle cx="288" cy="195" r="1.5" fill="#ffffff" />
 
           {/* Left Wing Windows */}
-          <rect x="180" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="180" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="191" y1="140" x2="191" y2="166" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="180" y1="153" x2="202" y2="153" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="215" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="215" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="226" y1="140" x2="226" y2="166" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="215" y1="153" x2="237" y2="153" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="180" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="180" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="191" y1="178" x2="191" y2="204" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="180" y1="191" x2="202" y2="191" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="215" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="215" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="226" y1="178" x2="226" y2="204" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="215" y1="191" x2="237" y2="191" stroke="#0284c7" strokeWidth="1.5" />
 
           {/* Right Wing Windows */}
-          <rect x="335" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="335" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="346" y1="140" x2="346" y2="166" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="335" y1="153" x2="357" y2="153" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="370" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="370" y="140" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="381" y1="140" x2="381" y2="166" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="370" y1="153" x2="392" y2="153" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="335" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="335" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="346" y1="178" x2="346" y2="204" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="335" y1="191" x2="357" y2="191" stroke="#0284c7" strokeWidth="1.5" />
 
-          <rect x="370" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#0c2340" strokeWidth="2" />
+          <rect x="370" y="178" width="22" height="26" rx="2" fill="#ffffff" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="381" y1="178" x2="381" y2="204" stroke="#0284c7" strokeWidth="1.5" />
           <line x1="370" y1="191" x2="392" y2="191" stroke="#0284c7" strokeWidth="1.5" />
         </g>
@@ -187,48 +187,48 @@ export default function HeroSceneIllustration() {
         {/* Left Device: EpiPen® 300mcg (Yellow Body, Blue Cap, Black Base) */}
         <g transform="translate(372, 160) rotate(4)">
           {/* Shadow */}
-          <ellipse cx="28" cy="236" rx="26" ry="7" fill="#0c2340" fillOpacity="0.2" />
+          <ellipse cx="28" cy="236" rx="26" ry="7" fill="#1d1d1f" fillOpacity="0.2" />
 
           {/* Blue Top Safety Cap */}
-          <path d="M12 0 C12 -6, 44 -6, 44 0 L46 22 C46 25, 42 28, 38 28 L18 28 C14 28, 10 25, 10 22 Z" fill="#0284c7" stroke="#0c2340" strokeWidth="2.5" />
+          <path d="M12 0 C12 -6, 44 -6, 44 0 L46 22 C46 25, 42 28, 38 28 L18 28 C14 28, 10 25, 10 22 Z" fill="#0284c7" stroke="#1d1d1f" strokeWidth="2.5" />
 
           {/* Yellow Main Pen Body */}
-          <rect x="8" y="28" width="40" height="175" rx="6" fill="#facc15" stroke="#0c2340" strokeWidth="2.5" />
+          <rect x="8" y="28" width="40" height="175" rx="6" fill="#facc15" stroke="#1d1d1f" strokeWidth="2.5" />
 
           {/* White Medicine Information Label */}
           <rect x="11" y="42" width="34" height="110" rx="3" fill="#ffffff" />
-          <text x="28" y="62" fill="#0c2340" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+          <text x="28" y="62" fill="#1d1d1f" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
             EpiPen®
           </text>
           <line x1="16" y1="70" x2="40" y2="70" stroke="#cbd5e1" strokeWidth="1" />
 
           {/* 300mcg Dose Indicator */}
           <rect x="11" y="105" width="34" height="42" fill="#facc15" />
-          <text x="28" y="124" fill="#0c2340" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+          <text x="28" y="124" fill="#1d1d1f" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
             300
           </text>
-          <text x="28" y="136" fill="#0c2340" fontSize="5.5" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">
+          <text x="28" y="136" fill="#1d1d1f" fontSize="5.5" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">
             micrograms
           </text>
 
           {/* Black Needle Base Tip */}
-          <path d="M10 203 L46 203 L42 232 C41 237, 36 240, 32 240 L24 240 C20 240, 15 237, 14 232 Z" fill="#1e293b" stroke="#0c2340" strokeWidth="2.5" />
+          <path d="M10 203 L46 203 L42 232 C41 237, 36 240, 32 240 L24 240 C20 240, 15 237, 14 232 Z" fill="#1e293b" stroke="#1d1d1f" strokeWidth="2.5" />
         </g>
 
         {/* Right Device: Jext® 150mcg (Sky Blue Body, White Label, Dark Blue Tip) */}
         <g transform="translate(432, 172) rotate(6)">
           {/* Shadow */}
-          <ellipse cx="28" cy="226" rx="24" ry="7" fill="#0c2340" fillOpacity="0.2" />
+          <ellipse cx="28" cy="226" rx="24" ry="7" fill="#1d1d1f" fillOpacity="0.2" />
 
           {/* Dark Blue Safety Cap */}
-          <path d="M12 0 C12 -5, 42 -5, 42 0 L44 20 C44 23, 40 26, 36 26 L18 26 C14 26, 10 23, 10 20 Z" fill="#0369a1" stroke="#0c2340" strokeWidth="2.5" />
+          <path d="M12 0 C12 -5, 42 -5, 42 0 L44 20 C44 23, 40 26, 36 26 L18 26 C14 26, 10 23, 10 20 Z" fill="#0369a1" stroke="#1d1d1f" strokeWidth="2.5" />
 
           {/* Light Sky-Blue Main Pen Body */}
-          <rect x="8" y="26" width="38" height="165" rx="6" fill="#38bdf8" stroke="#0c2340" strokeWidth="2.5" />
+          <rect x="8" y="26" width="38" height="165" rx="6" fill="#38bdf8" stroke="#1d1d1f" strokeWidth="2.5" />
 
           {/* White Medicine Information Label */}
           <rect x="11" y="40" width="32" height="105" rx="3" fill="#ffffff" />
-          <text x="27" y="60" fill="#0c2340" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+          <text x="27" y="60" fill="#1d1d1f" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
             Jext®
           </text>
           <line x1="16" y1="68" x2="38" y2="68" stroke="#cbd5e1" strokeWidth="1" />
@@ -243,7 +243,7 @@ export default function HeroSceneIllustration() {
           </text>
 
           {/* Dark Navy / Black Needle Base Tip */}
-          <path d="M10 191 L44 191 L40 220 C39 224, 35 227, 31 227 L23 227 C19 227, 15 224, 14 220 Z" fill="#0f172a" stroke="#0c2340" strokeWidth="2.5" />
+          <path d="M10 191 L44 191 L40 220 C39 224, 35 227, 31 227 L23 227 C19 227, 15 224, 14 220 Z" fill="#0f172a" stroke="#1d1d1f" strokeWidth="2.5" />
         </g>
       </svg>
     </div>

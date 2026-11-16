@@ -115,7 +115,7 @@ export default function SchoolSearchInput({
           <button
             type="button"
             onClick={handleSwitchToSearch}
-            className="text-[#096556] hover:underline font-semibold flex items-center gap-1"
+            className="text-[#09653d] hover:underline font-semibold flex items-center gap-1"
           >
             <Search className="w-3 h-3" /> Search UK Schools Directory Instead
           </button>
@@ -130,11 +130,11 @@ export default function SchoolSearchInput({
       {selected ? (
         <div className="flex items-center justify-between p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#096556] text-white flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#09653d] text-white flex items-center justify-center shrink-0">
               <Building2 className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-[#0c2340] leading-snug">{selected}</p>
+              <p className="text-xs font-bold text-[#1d1d1f] leading-snug">{selected}</p>
               <p className="text-[11px] text-emerald-800">Verified from UK Government GIAS Directory</p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function SchoolSearchInput({
               setSearchTerm('');
               setIsOpen(true);
             }}
-            className="text-xs font-semibold text-[#096556] hover:text-[#075145] hover:underline px-2.5 py-1 rounded-lg border border-emerald-300 bg-white shadow-2xs flex items-center gap-1"
+            className="text-xs font-semibold text-[#09653d] hover:text-[#064e2e] hover:underline px-2.5 py-1 rounded-lg border border-emerald-300 bg-white shadow-2xs flex items-center gap-1"
           >
             <Edit3 className="w-3 h-3" /> Change
           </button>
@@ -166,12 +166,12 @@ export default function SchoolSearchInput({
             }}
             onFocus={() => setIsOpen(true)}
             placeholder={placeholder}
-            className="w-full pl-10 pr-10 py-3 rounded-xl border border-stone-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 shadow-2xs placeholder:text-stone-400"
+            className="w-full pl-10 pr-10 py-3 rounded-xl border border-stone-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 shadow-2xs placeholder:text-stone-400"
           />
 
           {isLoading ? (
             <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center">
-              <div className="w-4 h-4 border-2 border-[#096556] border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#09653d] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : searchTerm ? (
             <button
@@ -193,7 +193,7 @@ export default function SchoolSearchInput({
         <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white rounded-2xl border border-stone-200 shadow-xl overflow-hidden max-h-80 flex flex-col">
           <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between text-[11px] text-stone-500 font-semibold px-4">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#096556]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#09653d]" />
               {searchTerm ? `Results matching "${searchTerm}"` : 'Pre-populated UK Educational Institutions'}
             </span>
             <span>{results.length} found</span>
@@ -207,7 +207,7 @@ export default function SchoolSearchInput({
                   <button
                     type="button"
                     onClick={handleEnableManual}
-                    className="mt-3 px-4 py-2 rounded-full bg-[#f0faf7] border border-[#c6eee3] text-[#096556] font-bold text-xs hover:bg-[#e0f5ef] transition-colors"
+                    className="mt-3 px-4 py-2 rounded-full bg-[#f0faf7] border border-[#c6eee3] text-[#09653d] font-bold text-xs hover:bg-[#e0f5ef] transition-colors"
                   >
                     + Enter School Manually (Other)
                   </button>
@@ -228,7 +228,7 @@ export default function SchoolSearchInput({
                   >
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="font-bold text-xs sm:text-sm text-[#0c2340] group-hover:text-[#096556] transition-colors">
+                        <span className="font-bold text-xs sm:text-sm text-[#1d1d1f] group-hover:text-[#09653d] transition-colors">
                           {school.name}
                         </span>
                         {school.phase && (
@@ -245,7 +245,7 @@ export default function SchoolSearchInput({
                             Independent / Private
                           </span>
                         ) : isAcademy ? (
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-[#096556] border border-teal-200 font-semibold">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-[#09653d] border border-emerald-200 font-semibold">
                             Academy
                           </span>
                         ) : (
@@ -265,7 +265,7 @@ export default function SchoolSearchInput({
                       </div>
                     </div>
 
-                    <span className="text-xs text-[#096556] font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1">
+                    <span className="text-xs text-[#09653d] font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1">
                       Select &rarr;
                     </span>
                   </button>
@@ -280,7 +280,7 @@ export default function SchoolSearchInput({
               <button
                 type="button"
                 onClick={handleEnableManual}
-                className="text-[#096556] hover:underline font-bold"
+                className="text-[#09653d] hover:underline font-bold"
               >
                 Enter School Manually (Other) &rarr;
               </button>

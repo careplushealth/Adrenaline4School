@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-GB">
-      <body className="font-sans min-h-screen flex flex-col bg-white text-[#0c2340] antialiased selection:bg-[#096556] selection:text-white">
+      <body className="font-sans min-h-screen flex flex-col bg-white text-[#1d1d1f] antialiased selection:bg-[#09653d] selection:text-white">
         <SchoolAuthProvider>
           <CartProvider>
             <AppShell>{children}</AppShell>

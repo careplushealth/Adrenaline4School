@@ -16,6 +16,7 @@
     "@neon/config": "^1.9.2",
     "@neon/env": "^1.6.3",
     "@neondatabase/serverless": "^1.2.0",
+    "@stripe/react-stripe-js": "^7.0.0",
     "@stripe/stripe-js": "^10.1.0",
     "@types/nodemailer": "^8.0.2",
     "better-sqlite3": "^13.0.3",

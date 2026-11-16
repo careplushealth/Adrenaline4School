@@ -3,17 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  ShieldCheck,
   Lock,
   ArrowRight,
   AlertCircle,
   KeyRound,
-  Building2,
-  CheckCircle,
-  Sparkles,
+  RefreshCw,
 } from 'lucide-react';
-
-const ADMIN_PASSWORDS = ['adrenaline2026', 'admin2026', 'a4s2026'];
 
 export default function AdminAuthGate({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -26,25 +21,40 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
     setIsAuthenticated(authStatus === 'true');
   }, []);
 
-  const handleLogin = (e?: React.FormEvent) => {
+  const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (!password) {
+      setError('Please enter the staff security passphrase.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
-    const trimmed = password.trim().toLowerCase();
-    if (ADMIN_PASSWORDS.includes(trimmed) || trimmed === 'admin') {
-      localStorage.setItem('a4s_admin_authenticated', 'true');
-      setIsAuthenticated(true);
-      setError('');
-    } else {
-      setError('Invalid authorization passphrase. Please verify your staff credentials.');
-    }
-    setLoading(false);
-  };
+    try {
+      const res = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password.trim() }),
+      });
 
-  const handleQuickUnlock = () => {
-    localStorage.setItem('a4s_admin_authenticated', 'true');
-    setIsAuthenticated(true);
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('a4s_admin_authenticated', 'true');
+        if (data.token) {
+          localStorage.setItem('a4s_admin_token', data.token);
+        }
+        setIsAuthenticated(true);
+        setError('');
+      } else {
+        setError(data.error || 'Invalid authorization passphrase. Please verify your staff credentials.');
+      }
+    } catch {
+      setError('Unable to authenticate with security server. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Prevent flash while checking localStorage
@@ -81,7 +91,7 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
           </div>
 
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-[#096556] text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#096556]/25 font-bold">
+            <div className="w-14 h-14 rounded-2xl bg-[#09653d] text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#09653d]/25 font-bold">
               <Lock className="w-6 h-6" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Staff Administration Gateway</h1>
@@ -105,7 +115,7 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
                     setPassword(e.target.value);
                     setError('');
                   }}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-navy-950/80 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#096556] focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-navy-950/80 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#09653d] focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -120,29 +130,20 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-[#096556] hover:bg-[#075246] text-white font-bold text-sm shadow-lg shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-sm shadow-lg shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
             >
-              <span>Unlock Admin Portal</span>
-              <ArrowRight className="w-4 h-4" />
+              {loading ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <span>Unlock Admin Portal</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 
-          {/* Quick Staff Evaluation Unlock */}
-          <div className="mt-6 pt-5 border-t border-slate-800/80 text-center space-y-2">
-            <p className="text-[11px] text-slate-400">
-              Default password: <code className="bg-slate-800 px-1.5 py-0.5 rounded text-emerald-300 font-mono">adrenaline2026</code>
-            </p>
-            <button
-              onClick={handleQuickUnlock}
-              type="button"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Instant Staff Sign-In (Evaluation Mode)</span>
-            </button>
-          </div>
-
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center pt-4 border-t border-slate-800/80">
             <Link href="/" className="text-xs text-slate-400 hover:text-white transition-colors">
               &larr; Return to School Website
             </Link>

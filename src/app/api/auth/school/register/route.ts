@@ -88,8 +88,9 @@ export async function POST(request: Request) {
     await db.prepare(`
       INSERT INTO organisations (id, name, type, billing_email, billing_phone)
       VALUES (?, ?, ?, ?, ?)
-    `).run(orgId, schoolName, 'Single School', cleanEmail, phone || '0800 123 4567');
+    `).run(orgId, schoolName, 'Single School', cleanEmail, phone || '0161 973 3552');
 
+    const effectiveUrn = (urn && urn.trim()) ? urn.trim() : `URN-${Date.now().toString().slice(-6)}`;
     const schoolId = `sch-${Date.now()}`;
     await db.prepare(`
       INSERT INTO schools (
@@ -99,7 +100,7 @@ export async function POST(request: Request) {
     `).run(
       schoolId,
       orgId,
-      urn || '100000',
+      effectiveUrn,
       schoolName,
       'Primary',
       'School Reception',
@@ -109,6 +110,34 @@ export async function POST(request: Request) {
       cleanEmail,
       phone || null
     );
+
+    // Also ensure school is indexed in directory for admin discovery
+    try {
+      await db.prepare(`
+        INSERT INTO uk_schools_directory (
+          urn, name, phase, type, address_line1, town_city, postcode, phone,
+          headteacher_name, headteacher_email, office_email
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (urn) DO UPDATE SET
+          name = EXCLUDED.name,
+          headteacher_name = COALESCE(EXCLUDED.headteacher_name, uk_schools_directory.headteacher_name),
+          office_email = COALESCE(EXCLUDED.office_email, uk_schools_directory.office_email)
+      `).run(
+        effectiveUrn,
+        schoolName,
+        'Primary',
+        'Academy / School',
+        'School Reception',
+        'United Kingdom',
+        postcode || 'SW1A 1AA',
+        phone || '0161 973 3552',
+        headteacherName || contactName,
+        cleanEmail,
+        cleanEmail
+      );
+    } catch (dirErr) {
+      console.warn('Directory indexing note:', dirErr);
+    }
 
     // 2. Create unverified user
     const userId = `usr-${Date.now()}`;

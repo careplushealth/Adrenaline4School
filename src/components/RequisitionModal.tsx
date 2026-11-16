@@ -18,14 +18,16 @@ export default function RequisitionModal({
   initialSchoolName = "St. Mary's CE Primary School",
   initialHeadteacher = 'Mrs. Eleanor Clarke',
   items = [
-    { name: 'EpiPen® 300 micrograms (Adult / Child >30kg)', strength: '300mcg', quantity: 1 },
-    { name: 'EpiPen® Junior 150 micrograms (Child 15-30kg)', strength: '150mcg', quantity: 1 },
+    { name: 'EpiPen® 300 micrograms (Pupils >30kg)', strength: '300mcg', quantity: 2 },
+    { name: 'EpiPen® Junior 150 micrograms (Pupils 15-30kg)', strength: '150mcg', quantity: 2 },
   ],
 }: RequisitionModalProps) {
   const [schoolName, setSchoolName] = useState(initialSchoolName);
   const [headteacher, setHeadteacher] = useState(initialHeadteacher);
-  const [schoolUrn, setSchoolUrn] = useState('102941');
-  const [postcode, setPostcode] = useState('W8 4PT');
+  const [schoolAddress, setSchoolAddress] = useState('St. Mary\'s Road, Kensington');
+  const [schoolCity, setSchoolCity] = useState('London');
+  const [schoolPostcode, setSchoolPostcode] = useState('W8 4PT');
+  const [schoolPhone, setSchoolPhone] = useState('0161 973 3552');
   const [downloaded, setDownloaded] = useState(false);
 
   if (!isOpen) return null;
@@ -37,230 +39,224 @@ export default function RequisitionModal({
       format: 'a4',
     });
 
-    // Header
-    doc.setFillColor(35, 60, 48); // Deep Forest
+    // Header Banner
+    doc.setFillColor(12, 35, 64); // Deep Navy
     doc.rect(0, 0, 210, 20, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.text('OFFICIAL HEADTEACHER REQUISITION FORM FOR EMERGENCY ADRENALINE AUTO-INJECTORS', 14, 13);
 
-    // Statutory Guidance Notice
-    doc.setTextColor(22, 35, 26);
+    // Title
+    doc.setTextColor(12, 35, 64);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.text('SCHOOL REQUISITION ORDER', 14, 32);
 
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(75, 85, 80);
-    doc.text('Issued pursuant to The Human Medicines (Amendment) Regulations 2017 (SI 2017/715).', 14, 38);
-    doc.text('This order allows schools to obtain emergency adrenaline auto-injectors (AAIs) without named prescriptions.', 14, 43);
-
     // School Details Box
-    doc.setFillColor(250, 248, 245);
-    doc.setDrawColor(215, 220, 215);
-    doc.roundedRect(14, 48, 182, 38, 2, 2, 'FD');
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(226, 232, 240);
+    doc.roundedRect(14, 40, 182, 48, 2, 2, 'FD');
 
     doc.setFontSize(9);
-    doc.setTextColor(35, 60, 48);
+    doc.setTextColor(9, 101, 86); // Pine Teal
     doc.setFont('helvetica', 'bold');
-    doc.text('1. SCHOOL / EDUCATIONAL INSTITUTION DETAILS', 18, 55);
+    doc.text('1. SCHOOL / EDUCATIONAL INSTITUTION DETAILS', 18, 47);
 
     doc.setTextColor(22, 35, 26);
-    doc.setFontSize(9);
-    doc.text('School Name:', 18, 63);
+    doc.setFontSize(8.5);
+
+    doc.text('School Name:', 18, 55);
     doc.setFont('helvetica', 'normal');
-    doc.text(schoolName, 55, 63);
+    doc.text(schoolName, 55, 55);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('DfE URN Number:', 18, 70);
+    doc.text('School Address:', 18, 62);
     doc.setFont('helvetica', 'normal');
-    doc.text(schoolUrn, 55, 70);
+    doc.text(`${schoolAddress}, ${schoolCity}`, 55, 62);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('School Postcode:', 18, 77);
+    doc.text('Postcode:', 18, 69);
     doc.setFont('helvetica', 'normal');
-    doc.text(postcode, 55, 77);
+    doc.text(schoolPostcode, 55, 69);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Headteacher / Principal:', 110, 63);
+    doc.text('Telephone Number:', 18, 76);
     doc.setFont('helvetica', 'normal');
-    doc.text(headteacher, 155, 63);
+    doc.text(schoolPhone, 55, 76);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Date of Requisition:', 110, 70);
+    doc.text('Headteacher / Principal:', 115, 55);
     doc.setFont('helvetica', 'normal');
-    doc.text(new Date().toLocaleDateString('en-GB'), 155, 70);
+    doc.text(headteacher, 155, 55);
 
-    // Requested Items Table
-    doc.setFillColor(22, 35, 26);
-    doc.rect(14, 94, 182, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.text('Date of Requisition:', 115, 62);
+    doc.setFont('helvetica', 'normal');
+    doc.text(new Date().toLocaleDateString('en-GB'), 155, 62);
+
+    // Requested Items Table Header
+    doc.setFillColor(12, 35, 64);
+    doc.rect(14, 96, 182, 8, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(8.5);
-    doc.text('PRODUCT / STRENGTH', 18, 99.5);
-    doc.text('DOSE SPECIFICATION', 110, 99.5);
-    doc.text('QTY (TWIN PACKS)', 160, 99.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PRODUCT / DOSE SPECIFICATION', 18, 101.5);
+    doc.text('STRENGTH', 120, 101.5);
+    doc.text('QUANTITY', 165, 101.5);
 
-    let y = 108;
+    let y = 110;
     items.forEach((item) => {
       doc.setTextColor(22, 35, 26);
       doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
       doc.text(item.name, 18, y);
-      doc.text(item.strength, 110, y);
-      doc.text(`${item.quantity} Pack(s)`, 160, y);
+      doc.text(item.strength, 120, y);
+      doc.text(`${item.quantity} Pen(s)`, 165, y);
       y += 8;
     });
 
-    // Declaration Box
-    y += 4;
-    doc.setFillColor(250, 248, 245);
-    doc.setDrawColor(215, 220, 215);
-    doc.roundedRect(14, y, 182, 52, 2, 2, 'FD');
 
-    doc.setFontSize(9);
-    doc.setTextColor(35, 60, 48);
-    doc.setFont('helvetica', 'bold');
-    doc.text('2. HEADTEACHER DECLARATION & STATUTORY UNDERTAKING', 18, y + 8);
 
-    doc.setTextColor(22, 35, 26);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    const declaration = 
-      "I hereby requisition the above adrenaline auto-injectors on behalf of the named school.\n" +
-      "I confirm that:\n" +
-      "• The emergency adrenaline auto-injectors are to be held as spare stock for use in an emergency on pupils at risk of anaphylaxis.\n" +
-      "• The school maintains an emergency allergy protocol and allergy register in compliance with Department of Health guidance.\n" +
-      "• Storage arrangements are in place to ensure pens are safely kept at room temperature (below 25°C) and accessible to trained staff.\n" +
-      "• I understand that all supplies are subject to verification and clinical dispensing by a GPhC registered pharmacy.";
-    
-    doc.text(declaration, 18, y + 16);
-
-    // Signatures Area
-    y += 58;
-    doc.setDrawColor(215, 220, 215);
-    doc.rect(14, y, 182, 45);
-
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(22, 35, 26);
-    doc.text('3. AUTHORISED SIGNATURE', 18, y + 8);
-
-    doc.setFont('helvetica', 'normal');
-    doc.text('Signature of Headteacher / Principal: ___________________________________', 18, y + 22);
-    doc.text(`Print Full Name: ${headteacher}`, 18, y + 32);
-    doc.text(`Date Signed: ________________________`, 120, y + 32);
-
-    doc.text('School Stamp (if available):', 120, y + 14);
+    // Signatures Area — NO SCHOOL STAMP
+    y += 12;
     doc.setDrawColor(226, 232, 240);
-    doc.rect(120, y + 17, 45, 18);
+    doc.rect(14, y, 182, 38);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(12, 35, 64);
+    doc.text('2. AUTHORISED HEADTEACHER SIGNATURE', 18, y + 8);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(22, 35, 26);
+    doc.text('Signature of Headteacher / Principal: __________________________________________________', 18, y + 20);
+    doc.text(`Print Full Name: ${headteacher}`, 18, y + 29);
+    doc.text(`Date Signed: ________________________`, 125, y + 29);
 
     // Footer
     doc.setFontSize(7.5);
     doc.setTextColor(115, 125, 120);
-    doc.text('Please sign this form and upload it during checkout or email to: pharmacy@adrenaline4schools.co.uk', 14, 280);
-    doc.text('Adrenaline4Schools | In Partnership with GPhC Registered Pharmacy Network', 14, 285);
+    doc.text('Please sign this requisition and upload during checkout or email to: pharmacy@adrenaline4schools.co.uk', 14, 275);
+    doc.text('Adrenaline4Schools | Clinical Supply in Partnership with UK GPhC Registered Dispensing Pharmacies', 14, 280);
 
     doc.save(`Headteacher-Requisition-${schoolName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
     setDownloaded(true);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0c2340]/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4 overflow-y-auto">
+      <div className="bg-white rounded-[28px] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-black/[0.08] relative animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-[#0c2340] hover:bg-slate-100 transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-[#09653d] hover:bg-black/[0.04] transition-colors apple-btn"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3.5 mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-[#e6f5f1] text-[#096556] flex items-center justify-center border border-[#c6eee3]">
+        <div className="flex items-center gap-3.5 mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-[#09653d]/[0.08] text-[#09653d] flex items-center justify-center border border-[#09653d]/15 shadow-2xs">
             <FileText className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-[#0c2340]">Official Headteacher Requisition Form</h3>
-            <p className="text-xs text-slate-500 font-sans">UK Human Medicines (Amendment) Regulations 2017 compliant</p>
+            <h3 className="text-xl font-bold text-[#1d1d1f] tracking-tight">Official Headteacher Requisition Form</h3>
+            <p className="text-xs text-slate-500 font-sans">For statutory school supply of emergency pupil adrenaline pens</p>
           </div>
         </div>
 
-        <div className="bg-[#f0faf7] border border-[#c6eee3] rounded-2xl p-4 text-xs text-[#0c2340] mb-6 space-y-1 font-sans">
-          <p className="font-bold flex items-center gap-1.5 text-[#096556]">
-            <CheckCircle className="w-4 h-4 text-[#096556]" />
-            UK Statutory Requirement
-          </p>
-          <p className="text-slate-600 leading-relaxed">
-            To supply emergency adrenaline auto-injectors to a school without individual pupil prescriptions, our GPhC registered pharmacy must receive an order signed by the Headteacher or Principal.
-          </p>
-        </div>
-
+        {/* Inputs */}
         <div className="space-y-4 mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#0c2340] mb-1.5">School Name</label>
+              <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">School Name</label>
               <input
                 type="text"
                 value={schoolName}
                 onChange={(e) => setSchoolName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0c2340] focus:ring-1 focus:ring-[#096556] focus:border-[#096556] focus:outline-none"
+                placeholder="e.g. St Mary's CE Primary School"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#0c2340] mb-1.5">Headteacher / Principal Name</label>
+              <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">Headteacher / Principal Name</label>
               <input
                 type="text"
                 value={headteacher}
                 onChange={(e) => setHeadteacher(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0c2340] focus:ring-1 focus:ring-[#096556] focus:border-[#096556] focus:outline-none"
+                placeholder="e.g. Mrs. Eleanor Clarke"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">School Address</label>
+            <input
+              type="text"
+              value={schoolAddress}
+              onChange={(e) => setSchoolAddress(e.target.value)}
+              placeholder="e.g. St Mary's Road, High Street"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#0c2340] mb-1.5">DfE Unique Reference Number (URN)</label>
+              <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">Town / City</label>
               <input
                 type="text"
-                value={schoolUrn}
-                onChange={(e) => setSchoolUrn(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0c2340] focus:ring-1 focus:ring-[#096556] focus:border-[#096556] focus:outline-none"
+                value={schoolCity}
+                onChange={(e) => setSchoolCity(e.target.value)}
+                placeholder="e.g. London"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#0c2340] mb-1.5">School Postcode</label>
+              <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">Postcode</label>
               <input
                 type="text"
-                value={postcode}
-                onChange={(e) => setPostcode(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-[#0c2340] focus:ring-1 focus:ring-[#096556] focus:border-[#096556] focus:outline-none"
+                value={schoolPostcode}
+                onChange={(e) => setSchoolPostcode(e.target.value)}
+                placeholder="e.g. W8 4PT"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5 font-sans">School Phone Number</label>
+              <input
+                type="tel"
+                value={schoolPhone}
+                onChange={(e) => setSchoolPhone(e.target.value)}
+                placeholder="e.g. 0161 973 3552"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-black/[0.08] bg-[#f5f5f7] text-sm text-[#1d1d1f] focus:ring-2 focus:ring-[#09653d]/20 focus:border-[#09653d] focus:bg-white focus:outline-none transition-all font-sans"
               />
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-black/[0.06]">
           <button
             onClick={handleDownloadPDF}
-            className="flex-1 py-3 px-5 rounded-full bg-[#096556] hover:bg-[#075145] text-white font-semibold text-sm shadow-xs flex items-center justify-center gap-2 transition-all"
+            className="flex-1 py-3.5 px-5 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white font-semibold text-sm shadow-xs flex items-center justify-center gap-2 transition-all apple-btn"
           >
             <Download className="w-4 h-4" />
-            <span>Generate & Download Signed PDF Form</span>
+            <span>Generate & Download Requisition PDF</span>
           </button>
           <button
             onClick={onClose}
-            className="py-3 px-6 rounded-full border border-slate-300 hover:bg-slate-50 text-[#0c2340] font-semibold text-sm transition-colors"
+            className="py-3.5 px-6 rounded-full border border-black/[0.08] hover:bg-[#f5f5f7] text-[#1d1d1f] font-semibold text-sm transition-colors apple-btn"
           >
             Close
           </button>
         </div>
 
         {downloaded && (
-          <div className="mt-4 p-3.5 bg-[#e6f5f1] border border-[#c6eee3] rounded-2xl text-[#096556] text-xs flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#096556] shrink-0" />
-            <span>PDF downloaded! Have your Headteacher sign it and upload it at checkout or email it to our pharmacy team.</span>
+          <div className="mt-4 p-3.5 bg-[#09653d]/[0.08] border border-[#09653d]/15 rounded-2xl text-[#09653d] text-xs flex items-center gap-2 font-sans">
+            <CheckCircle className="w-4 h-4 text-[#09653d] shrink-0" />
+            <span>PDF downloaded successfully! Have your Headteacher sign it and upload it at checkout.</span>
           </div>
         )}
       </div>

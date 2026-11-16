@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
-import { sendEmail } from '@/lib/email-service';
+import { sendEmail, sendAdminOrderNotification } from '@/lib/email-service';
 import crypto from 'crypto';
 
 export async function GET(request: Request) {
@@ -15,9 +15,17 @@ export async function GET(request: Request) {
       SELECT 
         o.*,
         s.name as school_name,
+        s.urn as school_urn,
+        s.headteacher_name,
+        s.headteacher_email,
+        s.phone as school_phone,
         org.name as organisation_name,
+        inv.id as invoice_id,
         inv.invoice_number,
-        inv.status as invoice_status
+        inv.status as invoice_status,
+        inv.due_date as invoice_due_date,
+        inv.sent_at as invoice_sent_at,
+        inv.sent_to_email as invoice_sent_to_email
       FROM orders o
       LEFT JOIN schools s ON o.school_id = s.id
       LEFT JOIN organisations org ON o.organisation_id = org.id
@@ -87,6 +95,7 @@ export async function POST(request: Request) {
       items, // [{ productId, quantity }]
       requisitionDocName,
       cardPaymentDetails, // simulated stripe or test card
+      stripePaymentIntentId,
     } = body;
 
     if (!items || items.length === 0) {
@@ -192,11 +201,13 @@ export async function POST(request: Request) {
           ?, 'pending', ?, ?
         )
       `).run(
-        orderId, orderReference, orgId, schoolId, contactName, contactEmail, contactPhone || '0800 123 4567',
+        orderId, orderReference, orgId, schoolId, contactName, contactEmail, contactPhone || '0161 973 3552',
         schoolName, deliveryAddress1, deliveryAddress2 || null, deliveryCity, deliveryPostcode, deliveryInstructions || null,
         billingOrgName || schoolName, billingAddress1 || deliveryAddress1, billingAddress2 || deliveryAddress2 || null, billingCity || deliveryCity, billingPostcode || deliveryPostcode, poNumber || null,
         subtotal, vatTotal, shippingTotal, totalAmount, paymentMethod, paymentStatus, orderStatus,
-        docStatus, requisitionDocName || null, isBACS ? 'BACS Invoice requested by school' : 'Card payment captured via Stripe checkout'
+        docStatus, requisitionDocName || null, isBACS 
+          ? 'BACS Invoice requested by school (30-day payment terms)' 
+          : (stripePaymentIntentId ? `Card payment verified via Stripe (ID: ${stripePaymentIntentId})` : 'Card payment captured via Stripe checkout')
       );
 
       // Insert Order Items
@@ -221,16 +232,16 @@ export async function POST(request: Request) {
         );
       }
 
-      // If BACS Invoice, generate formal invoice record
-      if (isBACS) {
-        const invCount = await db.prepare('SELECT count(*) as count FROM invoices').get() as { count: number };
-        const invSeq = (invCount?.count || 0) + 104;
-        const invoiceNumber = `INV-2026-${invSeq.toString().padStart(5, '0')}`;
-        const issueDate = new Date().toISOString().split('T')[0];
-        const dueDateObj = new Date();
-        dueDateObj.setDate(dueDateObj.getDate() + 30); // 30 days credit terms
-        const dueDate = dueDateObj.toISOString().split('T')[0];
+      // Generate formal invoice / VAT receipt record
+      const invCount = await db.prepare('SELECT count(*) as count FROM invoices').get() as { count: number };
+      const invSeq = (invCount?.count || 0) + 104;
+      const invoiceNumber = `INV-2026-${invSeq.toString().padStart(5, '0')}`;
+      const issueDate = new Date().toISOString().split('T')[0];
+      const dueDateObj = new Date();
+      dueDateObj.setDate(dueDateObj.getDate() + 30); // 30 days credit terms
+      const dueDate = dueDateObj.toISOString().split('T')[0];
 
+      if (isBACS) {
         await db.prepare(`
           INSERT INTO invoices (
             id, invoice_number, order_id, organisation_id, school_id, issue_date, due_date, po_number,
@@ -257,6 +268,35 @@ export async function POST(request: Request) {
           'Official 30-Day BACS School Invoice issued. Standard UK educational payment terms.',
           contactEmail
         );
+      } else {
+        // Card Payment — generate Electronic VAT Receipt (status: 'paid')
+        await db.prepare(`
+          INSERT INTO invoices (
+            id, invoice_number, order_id, organisation_id, school_id, issue_date, due_date, po_number,
+            subtotal, vat_total, total_amount, amount_paid, status, bacs_bank_name, bacs_account_name,
+            bacs_sort_code, bacs_account_number, bacs_reference, notes, sent_to_email, sent_at
+          ) VALUES (
+            ?, ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, 'paid', 'Stripe Online Payments', 'Adrenaline4Schools Limited',
+            '-', '-', ?, ?, ?, CURRENT_TIMESTAMP
+          )
+        `).run(
+          `inv-${orderId}`,
+          invoiceNumber,
+          orderId,
+          orgId,
+          schoolId,
+          issueDate,
+          issueDate,
+          poNumber || null,
+          subtotal,
+          vatTotal,
+          totalAmount,
+          totalAmount,
+          stripePaymentIntentId || `CARD-${orderReference.replace('A4S-', '')}`,
+          'Paid in full via Stripe Card Payment. Electronic VAT receipt issued.',
+          contactEmail
+        );
       }
 
       // Audit Log
@@ -271,26 +311,30 @@ export async function POST(request: Request) {
       );
     });
 
-    // 5. Send Order Confirmation Email
+    // 5. Send Order Confirmation Email to school contact
     const emailSubject = isBACS
       ? `Order & BACS Invoice Request Received: ${orderReference} - Adrenaline4Schools`
       : `Order Confirmation: ${orderReference} - Adrenaline4Schools`;
 
     const emailBody = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-        <h2 style="color: #0f766e;">Thank You For Your School Order</h2>
-        <p>Your order reference is: <strong>${orderReference}</strong></p>
-        <p>School: <strong>${schoolName}</strong></p>
-        <p>Total: <strong>£${totalAmount.toFixed(2)}</strong> (inc VAT)</p>
-        <p>Payment Method: <strong>${isBACS ? 'BACS Invoice (30 Days Terms)' : 'Card Paid'}</strong></p>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <div style="background-color: #09653d; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Adrenaline4Schools</h1>
+          <p style="color: #dcfce7; margin: 4px 0 0 0; font-size: 13px;">School Emergency Allergy Stock Order</p>
+        </div>
+        <h2 style="color: #1d1d1f; font-size: 18px; margin-top: 0;">Thank You For Your School Order</h2>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">Your order reference is: <strong>${orderReference}</strong></p>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">School: <strong>${schoolName}</strong></p>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">Total: <strong>£${totalAmount.toFixed(2)}</strong> (inc VAT)</p>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">Payment Method: <strong style="color: #09653d;">${isBACS ? '30-Day BACS School Invoice' : 'Card Payment (Paid)'}</strong></p>
         ${
           isBACS
-            ? '<p>Your BACS invoice has been generated. Please arrange bank transfer within 30 days quoting reference: <strong>A4S-' +
+            ? '<p style="font-size: 13px; color: #334155; line-height: 1.6; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 6px;">Your 30-day BACS school invoice has been generated. Please arrange bank transfer within 30 days quoting reference: <strong>A4S-' +
               orderReference.replace('A4S-', '') +
               '</strong></p>'
-            : '<p>Payment has been successfully authorized and your requisition is scheduled for GPhC pharmacy verification.</p>'
+            : '<p style="font-size: 13px; color: #334155; line-height: 1.6; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 6px;">Payment has been authorized and your requisition is scheduled for GPhC pharmacy verification.</p>'
         }
-        <p>You can track the progress of this order in your School Portal anytime.</p>
+        <p style="font-size: 12px; color: #64748b; margin-top: 24px;">Track your school stock and automated expiry alerts in your School Portal anytime.</p>
       </div>
     `;
 
@@ -301,6 +345,23 @@ export async function POST(request: Request) {
       relatedEntityType: 'order',
       relatedEntityId: orderId,
       html: emailBody,
+    });
+
+    // 6. Send order copy to internal operations email (Adrenaline4schools@gmail.com)
+    sendAdminOrderNotification({
+      orderReference,
+      schoolName,
+      urn,
+      total: totalAmount,
+      paymentMethod,
+      contactName,
+      contactEmail,
+      contactPhone,
+      items: validatedItems.map((i) => ({
+        name: i.name,
+        strength: i.strength,
+        quantity: i.quantity,
+      })),
     });
 
     return NextResponse.json({

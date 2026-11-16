@@ -29,7 +29,14 @@ export default async function AdminAuditPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
-              {auditLogs.map((log) => (
+              {auditLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-slate-400 font-sans">
+                    No administrative audit events recorded yet. Administrative actions and pharmacy approvals will be logged here.
+                  </td>
+                </tr>
+              ) : (
+                auditLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50">
                   <td className="py-3.5 px-4 text-slate-500">{log.created_at}</td>
                   <td className="py-3.5 px-4 font-bold text-navy-950 font-sans">{log.user_name || 'System'}</td>
@@ -41,7 +48,7 @@ export default async function AdminAuditPage() {
                   <td className="py-3.5 px-4 text-brand-700">{log.entity_type} ({log.entity_id || 'system'})</td>
                   <td className="py-3.5 px-4 font-sans text-slate-600">{log.details}</td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

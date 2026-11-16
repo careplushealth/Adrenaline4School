@@ -173,7 +173,14 @@ export default function AdminRemindersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {reminders.map((r: any) => (
+                {reminders.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="py-12 text-center text-slate-400">
+                      No active expiry reminders scheduled yet. Reminders are created automatically when school pen orders are completed.
+                    </td>
+                  </tr>
+                ) : (
+                  reminders.map((r: any) => (
                   <tr key={r.id} className="hover:bg-slate-50">
                     <td className="py-3.5 px-4 font-bold text-navy-950">{r.school_name}</td>
                     <td className="py-3.5 px-4">
@@ -210,7 +217,7 @@ export default function AdminRemindersPage() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                )))}
               </tbody>
             </table>
           </div>
@@ -232,7 +239,14 @@ export default function AdminRemindersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {emailLogs.map((log: any) => (
+              {emailLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                    No email audit logs recorded yet. Automated notification logs will appear here.
+                  </td>
+                </tr>
+              ) : (
+                emailLogs.map((log: any) => (
                 <tr key={log.id} className="hover:bg-slate-50">
                   <td className="py-3.5 px-4 text-slate-500">{log.sent_at}</td>
                   <td className="py-3.5 px-4 font-bold text-navy-900">{log.recipient_email}</td>
@@ -252,7 +266,7 @@ export default function AdminRemindersPage() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

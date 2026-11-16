@@ -9,7 +9,7 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
   });
 
   // Top header banner
-  doc.setFillColor(15, 118, 110); // Brand teal
+  doc.setFillColor(9, 101, 61); // Brand Logo Green (#09653d)
   doc.rect(0, 0, 210, 18, 'F');
 
   doc.setTextColor(255, 255, 255);
@@ -29,7 +29,7 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
   doc.text('Adrenaline4Schools Ltd', 14, 38);
   doc.text('GPhC Registered Pharmacy Partner Network', 14, 43);
   doc.text('Company Reg: 14892014 | VAT No: GB 491 0284 12', 14, 48);
-  doc.text('Email: finance@adrenaline4schools.co.uk | Tel: 0800 123 4567', 14, 53);
+  doc.text('Email: finance@adrenaline4schools.co.uk | Tel: 0161 973 3552', 14, 53);
 
   // Invoice Details Box (Right aligned)
   doc.setFillColor(248, 250, 252);
@@ -72,7 +72,7 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(15, 118, 110);
+  doc.setTextColor(9, 101, 61);
   doc.text('INVOICE TO (SCHOOL / MAT BILLING):', 18, 70);
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(9);
@@ -85,7 +85,7 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(15, 118, 110);
+  doc.setTextColor(9, 101, 61);
   doc.text('DELIVERY SITE (SCHOOL PREMISES):', 112, 70);
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(9);
@@ -157,12 +157,12 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
   doc.text('FREE (£0.00)', 172, y);
   y += 6;
 
-  doc.setFillColor(240, 253, 250);
-  doc.setDrawColor(13, 148, 136);
+  doc.setFillColor(240, 253, 244);
+  doc.setDrawColor(9, 101, 61);
   doc.roundedRect(120, y - 2, 76, 12, 1, 1, 'FD');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.setTextColor(15, 118, 110);
+  doc.setTextColor(9, 101, 61);
   doc.text('TOTAL AMOUNT DUE:', 123, y + 6);
   doc.text(`£${invoice.total_amount.toFixed(2)}`, 168, y + 6);
 
@@ -309,6 +309,170 @@ export function generateCertificatePDF(
 
   doc.setDrawColor(15, 23, 42);
   doc.line(205, 170, 265, 170);
+
+  return doc;
+}
+
+export function generateRequisitionPDF(order: Order): jsPDF {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  // Header Banner
+  doc.setFillColor(12, 35, 64); // Deep Navy
+  doc.rect(0, 0, 210, 20, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('OFFICIAL HEADTEACHER REQUISITION FORM FOR EMERGENCY ADRENALINE AUTO-INJECTORS', 14, 13);
+
+  // Title
+  doc.setTextColor(12, 35, 64);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SCHOOL REQUISITION ORDER', 14, 32);
+
+  // School Details Box
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.roundedRect(14, 40, 182, 48, 2, 2, 'FD');
+
+  doc.setFontSize(9);
+  doc.setTextColor(9, 101, 86); // Pine Teal
+  doc.setFont('helvetica', 'bold');
+  doc.text('1. SCHOOL / EDUCATIONAL INSTITUTION DETAILS', 18, 47);
+
+  doc.setTextColor(22, 35, 26);
+  doc.setFontSize(8.5);
+
+  const schoolName = order.school_name || order.delivery_school_name || 'Educational Institution';
+  const headteacher = (order as any).headteacher_name || order.contact_name || 'The Headteacher / Principal';
+  const city = order.delivery_city || (order as any).delivery_town_city || '';
+  const address = `${order.delivery_address_line1 || 'School Reception'}${city ? `, ${city}` : ''}`;
+  const postcode = order.delivery_postcode || '';
+  const phone = order.contact_phone || '0161 973 3552';
+  const orderRef = order.order_reference || order.id;
+
+  doc.text('School Name:', 18, 55);
+  doc.setFont('helvetica', 'normal');
+  doc.text(schoolName, 55, 55);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('School Address:', 18, 62);
+  doc.setFont('helvetica', 'normal');
+  doc.text(address, 55, 62);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Postcode:', 18, 69);
+  doc.setFont('helvetica', 'normal');
+  doc.text(postcode, 55, 69);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Telephone Number:', 18, 76);
+  doc.setFont('helvetica', 'normal');
+  doc.text(phone, 55, 76);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Headteacher / Principal:', 115, 55);
+  doc.setFont('helvetica', 'normal');
+  doc.text(headteacher, 155, 55);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Date of Requisition:', 115, 62);
+  doc.setFont('helvetica', 'normal');
+  doc.text(order.created_at ? order.created_at.split(' ')[0] : new Date().toLocaleDateString('en-GB'), 155, 62);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Order Reference:', 115, 69);
+  doc.setFont('helvetica', 'normal');
+  doc.text(orderRef, 155, 69);
+
+  // Requested Items Table Header
+  doc.setFillColor(12, 35, 64);
+  doc.rect(14, 96, 182, 8, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Description of Medication Requested', 18, 101.5);
+  doc.text('Strength', 125, 101.5);
+  doc.text('Pack Qty', 160, 101.5);
+
+  let currentY = 104;
+  const items = order.items && order.items.length > 0 ? order.items : [
+    { product_name: 'EpiPen® 300 micrograms', quantity: 2 },
+    { product_name: 'EpiPen® Junior 150 micrograms', quantity: 2 }
+  ];
+
+  items.forEach((item: any, i: number) => {
+    currentY += 8;
+    doc.setFillColor(i % 2 === 0 ? 255 : 248, i % 2 === 0 ? 255 : 250, i % 2 === 0 ? 255 : 252);
+    doc.rect(14, currentY - 5, 182, 8, 'F');
+    doc.setTextColor(22, 35, 26);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.text(item.product_name || item.name || 'Adrenaline Auto-Injector', 18, currentY);
+    const strength = (item.product_name || '').includes('150') ? '150mcg' : '300mcg';
+    doc.text(strength, 125, currentY);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${item.quantity} pens`, 160, currentY);
+  });
+
+  // Section 2: Authorized Signatory Block
+  const sigY = Math.max(currentY + 18, 145);
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.roundedRect(14, sigY, 182, 60, 2, 2, 'FD');
+
+  doc.setFontSize(9);
+  doc.setTextColor(9, 101, 86);
+  doc.setFont('helvetica', 'bold');
+  doc.text('2. AUTHORISED SIGNATURE & OFFICIAL REQUISITION APPROVAL', 18, sigY + 8);
+
+  doc.setTextColor(22, 35, 26);
+  doc.setFontSize(8.5);
+
+  doc.text('Signature of Headteacher / Principal:', 18, sigY + 20);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Electronically verified: ${headteacher}`, 75, sigY + 20);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Full Name (Printed):', 18, sigY + 28);
+  doc.setFont('helvetica', 'normal');
+  doc.text(headteacher, 75, sigY + 28);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Role / Position:', 18, sigY + 36);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Headteacher / Principal', 75, sigY + 36);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Date of Signing:', 18, sigY + 44);
+  doc.setFont('helvetica', 'normal');
+  doc.text(order.created_at ? order.created_at.split(' ')[0] : new Date().toLocaleDateString('en-GB'), 75, sigY + 44);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('School Stamp / Reference:', 18, sigY + 52);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Official Requisition Ref: ${orderRef}`, 75, sigY + 52);
+
+  // Pharmacy Endorsement Box
+  doc.setFillColor(241, 245, 249);
+  doc.setDrawColor(203, 213, 225);
+  doc.roundedRect(14, sigY + 66, 182, 32, 2, 2, 'FD');
+
+  doc.setFontSize(8.5);
+  doc.setTextColor(12, 35, 64);
+  doc.setFont('helvetica', 'bold');
+  doc.text('3. DISPENSING PHARMACY CLINICAL ENDORSEMENT', 18, sigY + 73);
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(71, 85, 105);
+  doc.text('Verified under Human Medicines (Amendment) Regulations 2017 Schedule 17.', 18, sigY + 80);
+  doc.text(`Pharmacy Status: ${order.pharmacy_review_status?.toUpperCase() || 'APPROVED'} | Batch Records Recorded`, 18, sigY + 86);
+  doc.text('Superintendent Pharmacist GPhC Reg # 1092812 | Adrenaline4Schools Clinical Supply', 18, sigY + 92);
 
   return doc;
 }

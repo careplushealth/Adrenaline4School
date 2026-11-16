@@ -6,13 +6,13 @@ import { Settings, ShieldCheck, Landmark, BellRing, Save, CheckCircle } from 'lu
 export default function AdminSettingsPage() {
   const [saved, setSaved] = useState(false);
   const [settings, setSettings] = useState({
-    pharmacyName: 'St. Jude Community Pharmacy Ltd (GPhC Network)',
-    gphcNumber: '1092812',
-    superintendent: 'Marcus Vance MRPharmS (GPhC #2081921)',
-    bacsBank: 'Barclays Bank UK PLC',
+    pharmacyName: '',
+    gphcNumber: '',
+    superintendent: '',
+    bacsBank: '',
     bacsAccountName: 'Adrenaline4Schools Limited',
-    bacsSortCode: '20-00-00',
-    bacsAccountNumber: '83920184',
+    bacsSortCode: '',
+    bacsAccountNumber: '',
     remindersEnabled: true,
     rem12m: true,
     rem6m: true,
@@ -48,6 +48,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Pharmacy Dispensing Partner</label>
               <input
                 value={settings.pharmacyName}
+                placeholder="e.g. GPhC Dispensing Pharmacy Partner"
                 onChange={(e) => setSettings({ ...settings, pharmacyName: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500"
               />
@@ -56,6 +57,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">GPhC Registered Premises #</label>
               <input
                 value={settings.gphcNumber}
+                placeholder="e.g. 7-digit GPhC Number"
                 onChange={(e) => setSettings({ ...settings, gphcNumber: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-brand-500"
               />
@@ -64,6 +66,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Superintendent Pharmacist</label>
               <input
                 value={settings.superintendent}
+                placeholder="e.g. Superintendent Pharmacist MRPharmS"
                 onChange={(e) => setSettings({ ...settings, superintendent: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500"
               />
@@ -85,6 +88,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Bank Name</label>
               <input
                 value={settings.bacsBank}
+                placeholder="e.g. Barclays Bank UK PLC"
                 onChange={(e) => setSettings({ ...settings, bacsBank: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500"
               />
@@ -93,6 +97,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Account Beneficiary Name</label>
               <input
                 value={settings.bacsAccountName}
+                placeholder="Adrenaline4Schools Limited"
                 onChange={(e) => setSettings({ ...settings, bacsAccountName: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-brand-500"
               />
@@ -101,6 +106,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Sort Code</label>
               <input
                 value={settings.bacsSortCode}
+                placeholder="00-00-00"
                 onChange={(e) => setSettings({ ...settings, bacsSortCode: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-brand-500"
               />
@@ -109,6 +115,7 @@ export default function AdminSettingsPage() {
               <label className="block text-xs font-bold text-navy-800 mb-1">Account Number</label>
               <input
                 value={settings.bacsAccountNumber}
+                placeholder="00000000"
                 onChange={(e) => setSettings({ ...settings, bacsAccountNumber: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-brand-500"
               />

@@ -180,7 +180,7 @@ export default function AdminCustomersPage() {
               : 'border-transparent text-slate-500 hover:text-navy-950'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-[#096556]" />
+          <Sparkles className="w-4 h-4 text-[#09653d]" />
           <span>UK Schools Outreach Directory ({directorySchools.length || 34}+ Leads)</span>
         </button>
       </div>
@@ -225,43 +225,60 @@ export default function AdminCustomersPage() {
       {/* Tab 1: Active School Customers */}
       {activeTab === 'accounts' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSchools.map((sch) => (
-            <div key={sch.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs flex flex-col justify-between hover:border-slate-300 transition-all">
-              <div>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
-                    {sch.phase || 'Primary'} School
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400">URN: {sch.urn}</span>
-                </div>
-
-                <h3 className="font-bold text-base text-navy-950">{sch.name}</h3>
-                <p className="text-xs font-semibold text-slate-500 mb-3">{sch.organisation_name || 'Independent Single School'}</p>
-
-                <div className="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
-                  <p className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>{sch.address_line1}, {sch.town_city} {sch.postcode}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>Head: {sch.headteacher_name} ({sch.headteacher_email})</span>
-                  </p>
-                  {sch.phone && (
-                    <p className="flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>{sch.phone}</span>
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
-                <span className="text-navy-900">{sch.orders_count || 0} Orders</span>
-                <span className="text-emerald-700">{sch.active_pens_count || 0} Registered Supplies</span>
-              </div>
+          {filteredSchools.length === 0 ? (
+            <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-200">
+              <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="font-bold text-sm text-navy-950">No customer accounts registered yet</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4">
+                Schools register automatically when submitting an order or registering via the School Portal.
+              </p>
+              <button
+                onClick={() => setActiveTab('directory')}
+                className="px-4 py-2 rounded-xl bg-[#09653d] hover:bg-[#064e2e] text-white text-xs font-bold shadow-sm transition-all inline-flex items-center gap-1.5"
+              >
+                <span>Browse 27,180 UK Schools in Directory</span>
+                <span className="font-normal">&rarr;</span>
+              </button>
             </div>
-          ))}
+          ) : (
+            filteredSchools.map((sch) => (
+              <div key={sch.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs flex flex-col justify-between hover:border-slate-300 transition-all">
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                      {sch.phase || 'Primary'} School
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">URN: {sch.urn}</span>
+                  </div>
+
+                  <h3 className="font-bold text-base text-navy-950">{sch.name}</h3>
+                  <p className="text-xs font-semibold text-slate-500 mb-3">{sch.organisation_name || 'Independent Single School'}</p>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>{sch.address_line1}, {sch.town_city} {sch.postcode}</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Head: {sch.headteacher_name} ({sch.headteacher_email})</span>
+                    </p>
+                    {sch.phone && (
+                      <p className="flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{sch.phone}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+                  <span className="text-navy-900">{sch.orders_count || 0} Orders</span>
+                  <span className="text-emerald-700">{sch.active_pens_count || 0} Registered Supplies</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 

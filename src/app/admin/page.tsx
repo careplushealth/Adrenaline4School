@@ -214,30 +214,30 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Schools & Training Completions */}
+        {/* UK Schools Directory & Customer Accounts */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-sm text-navy-900">School Network & Training</h3>
+            <h3 className="font-bold text-sm text-navy-900">UK Schools Directory</h3>
             <span className="p-2 rounded-lg bg-brand-50 text-brand-600">
               <School className="w-4 h-4" />
             </span>
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-slate-500">Registered Schools & MATs</p>
+              <p className="text-xs text-slate-500">Official UK Schools Database</p>
               <p className="text-2xl font-black text-navy-950">
-                {stats?.totalSchools ?? 0} schools ({stats?.totalOrganisations ?? 0} trusts)
+                27,180 <span className="text-sm font-semibold text-slate-500">schools</span>
               </p>
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-              <span className="text-slate-500">CPD Certificates Issued</span>
-              <span className="font-bold text-brand-700">{stats?.totalCompletions ?? 0} staff passed</span>
+              <span className="text-slate-500">Customer Accounts</span>
+              <span className="font-bold text-brand-700">{stats?.totalSchools ?? 0} active</span>
             </div>
             <Link
-              href="/admin/training"
+              href="/admin/schools"
               className="mt-2 block w-full py-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-800 text-xs font-bold text-center transition-colors"
             >
-              View Learner Records & Certs &rarr;
+              Browse Full UK School Directory &rarr;
             </Link>
           </div>
         </div>

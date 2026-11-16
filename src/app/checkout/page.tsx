@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart-context';
 import {
@@ -17,11 +17,14 @@ import {
   Lock,
   Sparkles,
   RefreshCw,
+  BellRing,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import MedicalDeviceVisual from '@/components/MedicalDeviceVisual';
 import SchoolSearchInput, { UKSchoolRecord } from '@/components/SchoolSearchInput';
 import RequisitionModal from '@/components/RequisitionModal';
+import UrgencyTimer from '@/components/UrgencyTimer';
+import StripePaymentSection, { StripePaymentHandle } from '@/components/StripePaymentSection';
 
 type Step = 'school' | 'delivery' | 'payment' | 'confirm';
 
@@ -34,9 +37,10 @@ export default function CheckoutPage() {
   const [isReqModalOpen, setIsReqModalOpen] = useState(false);
   const [isManualSchool, setIsManualSchool] = useState(false);
 
-  // Stripe state
+  // Stripe state & ref
+  const stripeRef = useRef<StripePaymentHandle>(null);
   const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
-  const [isLiveStripe, setIsLiveStripe] = useState<boolean>(false);
+  const [isLiveStripe, setIsLiveStripe] = useState<boolean>(true);
   const [isInitializingStripe, setIsInitializingStripe] = useState<boolean>(false);
 
   // Form state
@@ -48,7 +52,7 @@ export default function CheckoutPage() {
     contactName: '',
     contactEmail: '',
     contactPhone: '',
-    jobTitle: '',
+    jobTitle: 'Headteacher',
     deliveryAddress1: '',
     deliveryAddress2: '',
     deliveryCity: '',
@@ -74,12 +78,12 @@ export default function CheckoutPage() {
 
   const setField = (field: string, value: string | boolean) => setForm((prev) => ({ ...prev, [field]: value }));
 
-  // Initialize Stripe PaymentIntent when payment step is activated
+  // Initialize Stripe PaymentIntent when payment step is activated or method is card
   useEffect(() => {
-    if (step === 'payment' && form.paymentMethod === 'card' && !stripeClientSecret && total > 0) {
+    if (form.paymentMethod === 'card' && !stripeClientSecret && total > 0) {
       initStripePaymentIntent();
     }
-  }, [step, form.paymentMethod, total]);
+  }, [form.paymentMethod, total, stripeClientSecret]);
 
   const initStripePaymentIntent = async () => {
     try {
@@ -105,30 +109,9 @@ export default function CheckoutPage() {
     }
   };
 
-  // Card formatting helpers
-  const handleCardNumberChange = (val: string) => {
-    const raw = val.replace(/\D/g, '').slice(0, 16);
-    const formatted = raw.match(/.{1,4}/g)?.join(' ') || raw;
-    setField('cardNumber', formatted);
-  };
-
-  const handleExpiryChange = (val: string) => {
-    const raw = val.replace(/\D/g, '').slice(0, 4);
-    if (raw.length >= 3) {
-      setField('cardExpiry', `${raw.slice(0, 2)}/${raw.slice(2)}`);
-    } else {
-      setField('cardExpiry', raw);
-    }
-  };
-
-  const handleCvcChange = (val: string) => {
-    const raw = val.replace(/\D/g, '').slice(0, 4);
-    setField('cardCvc', raw);
-  };
-
   const handleSubmit = async () => {
     if (!form.acceptTerms || !form.acceptPharmacyTerms) {
-      setError('Please accept both the terms & conditions and pharmacy requirements to proceed.');
+      setError('Please accept both the terms & conditions and statutory pharmacy requirements to proceed.');
       return;
     }
     if (!form.schoolName || !form.contactEmail || !form.deliveryAddress1) {
@@ -136,24 +119,23 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (form.paymentMethod === 'card') {
-      const cleanCard = form.cardNumber.replace(/\s+/g, '');
-      if (cleanCard.length < 15) {
-        setError('Please enter a valid 16-digit debit or credit card number.');
-        return;
-      }
-      if (form.cardExpiry.length < 5) {
-        setError('Please enter a valid card expiry date (MM/YY).');
-        return;
-      }
-      if (form.cardCvc.length < 3) {
-        setError('Please enter a valid 3-digit card security CVC code.');
-        return;
-      }
-    }
-
     setIsSubmitting(true);
     setError('');
+
+    let confirmedPaymentIntentId: string | undefined = undefined;
+
+    // If paying by card, authenticate via live Stripe Elements
+    if (form.paymentMethod === 'card') {
+      if (stripeRef.current) {
+        const payRes = await stripeRef.current.confirmPayment();
+        if (!payRes.success) {
+          setError(payRes.error || 'Card payment authorization failed. Please check your card number, expiry, or CVC.');
+          setIsSubmitting(false);
+          return;
+        }
+        confirmedPaymentIntentId = payRes.paymentIntentId;
+      }
+    }
 
     try {
       const payload = {
@@ -176,14 +158,16 @@ export default function CheckoutPage() {
         billingPostcode: form.sameAsBilling ? form.deliveryPostcode : form.billingPostcode,
         poNumber: form.poNumber,
         paymentMethod: form.paymentMethod,
+        stripePaymentIntentId: confirmedPaymentIntentId,
         requisitionDocName: form.requisitionDocName || null,
         items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
         cardPaymentDetails:
           form.paymentMethod === 'card'
             ? {
-                last4: form.cardNumber.replace(/\s+/g, '').slice(-4),
-                cardHolder: form.cardName || form.contactName,
-                stripePaymentSecret: stripeClientSecret,
+                stripePaymentIntentId: confirmedPaymentIntentId,
+                paymentStatus: 'paid',
+                last4: 'Stripe',
+                cardHolder: form.contactName,
               }
             : undefined,
       };
@@ -198,6 +182,7 @@ export default function CheckoutPage() {
 
       if (!data.success) {
         setError(data.error || 'An error occurred while placing your order.');
+        setIsSubmitting(false);
         return;
       }
 
@@ -208,7 +193,6 @@ export default function CheckoutPage() {
       );
     } catch {
       setError('A network error occurred while communicating with the server. Please try again.');
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -224,10 +208,10 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#f8fbfb] flex items-center justify-center font-sans text-[#0c2340]">
+      <div className="min-h-screen bg-[#f8fbfb] flex items-center justify-center font-sans text-[#1d1d1f]">
         <div className="text-center">
-          <h2 className="text-2xl font-serif font-bold text-[#0c2340] mb-3">Your basket is empty</h2>
-          <Link href="/order-pens" className="text-[#096556] font-semibold hover:underline">
+          <h2 className="text-2xl font-serif font-bold text-[#1d1d1f] mb-3">Your basket is empty</h2>
+          <Link href="/order-pens" className="text-[#09653d] font-semibold hover:underline">
             Browse emergency adrenaline auto-injectors &rarr;
           </Link>
         </div>
@@ -236,25 +220,25 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fbfb] text-[#0c2340] py-10 font-sans">
+    <div className="min-h-screen bg-white text-[#1d1d1f] py-10 sm:py-14 font-sans">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Progress Steps */}
+        {/* Progress Steps — Apple Pill Stepper */}
         <div className="flex items-center justify-center gap-0 mb-10">
           {steps.map((s, i) => (
             <React.Fragment key={s.id}>
               <div
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-tight transition-all ${
                   s.id === step
-                    ? 'bg-[#096556] text-white shadow-xs'
+                    ? 'bg-[#09653d] text-white shadow-xs'
                     : i < currentStepIndex
-                    ? 'bg-emerald-100 text-emerald-900'
-                    : 'bg-stone-200/80 text-stone-500'
+                    ? 'bg-[#09653d]/[0.08] text-[#09653d] border border-[#09653d]/15'
+                    : 'bg-[#f5f5f7] text-slate-500 border border-black/[0.04]'
                 }`}
               >
                 {i < currentStepIndex ? (
-                  <CheckCircle className="w-3.5 h-3.5 text-[#096556]" />
+                  <CheckCircle className="w-3.5 h-3.5 text-[#09653d]" />
                 ) : (
-                  <span className="w-4 h-4 rounded-full bg-white/20 inline-flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-4 h-4 rounded-full bg-black/[0.08] inline-flex items-center justify-center text-[10px] font-bold">
                     {i + 1}
                   </span>
                 )}
@@ -262,7 +246,7 @@ export default function CheckoutPage() {
               </div>
               {i < steps.length - 1 && (
                 <div
-                  className={`w-8 h-0.5 ${i < currentStepIndex ? 'bg-emerald-400' : 'bg-stone-200'}`}
+                  className={`w-8 h-0.5 ${i < currentStepIndex ? 'bg-[#09653d]' : 'bg-black/[0.08]'}`}
                 />
               )}
             </React.Fragment>
@@ -271,7 +255,7 @@ export default function CheckoutPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Form Panel */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-stone-200/90 shadow-xs p-6 sm:p-8">
+          <div className="lg:col-span-8 bg-[#f5f5f7] rounded-[32px] border border-black/[0.06] shadow-2xs p-6 sm:p-9">
             {error && (
               <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
@@ -285,8 +269,8 @@ export default function CheckoutPage() {
             {/* Step 1: School */}
             {step === 'school' && (
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-serif font-bold text-[#0c2340]">School Information</h2>
+              <div>
+                  <h2 className="text-xl font-serif font-bold text-[#1d1d1f]">School Information</h2>
                   <p className="text-xs text-stone-500 mt-1">
                     Select your official school from the UK Department for Education register (24,000+ open schools).
                   </p>
@@ -295,7 +279,6 @@ export default function CheckoutPage() {
                 {!isManualSchool ? (
                   <div>
                     <SchoolSearchInput
-                      label="Find School in UK DfE GIAS Database"
                       placeholder="Type school name or postcode (e.g. St Mary's, SW1A 1AA)..."
                       selectedSchoolName={form.schoolName}
                       onSelectSchool={(school: UKSchoolRecord) => {
@@ -303,7 +286,7 @@ export default function CheckoutPage() {
                           ...prev,
                           schoolName: school.name,
                           urn: school.urn,
-                          headteacherName: school.headteacher || prev.headteacherName,
+                          headteacherName: school.headteacher_name || prev.headteacherName,
                           deliveryAddress1: school.address_line1 || prev.deliveryAddress1,
                           deliveryCity: school.town_city || prev.deliveryCity,
                           deliveryPostcode: school.postcode || prev.deliveryPostcode,
@@ -316,7 +299,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => setIsManualSchool(true)}
-                        className="text-[#096556] hover:underline font-semibold"
+                        className="text-[#09653d] hover:underline font-semibold"
                       >
                         Enter manually instead &rarr;
                       </button>
@@ -332,12 +315,12 @@ export default function CheckoutPage() {
                       value={form.schoolName}
                       onChange={(e) => setField('schoolName', e.target.value)}
                       placeholder="e.g. Oakridge Academy"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                     <button
                       type="button"
                       onClick={() => setIsManualSchool(false)}
-                      className="mt-2 text-xs text-[#096556] hover:underline font-semibold"
+                      className="mt-2 text-xs text-[#09653d] hover:underline font-semibold"
                     >
                       &larr; Search official UK School register
                     </button>
@@ -353,7 +336,7 @@ export default function CheckoutPage() {
                       value={form.urn}
                       onChange={(e) => setField('urn', e.target.value)}
                       placeholder="6-digit URN (e.g. 102934)"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 font-mono"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono"
                     />
                   </div>
                   <div>
@@ -364,13 +347,13 @@ export default function CheckoutPage() {
                       value={form.headteacherName}
                       onChange={(e) => setField('headteacherName', e.target.value)}
                       placeholder="e.g. Mrs Sarah Jenkins"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                 </div>
 
                 <div className="border-t border-stone-100 pt-5 space-y-4">
-                  <h3 className="font-serif font-bold text-sm text-[#0c2340]">Your Contact Details</h3>
+                  <h3 className="font-serif font-bold text-sm text-[#1d1d1f]">Your Contact Details</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">
@@ -381,19 +364,21 @@ export default function CheckoutPage() {
                         value={form.contactName}
                         onChange={(e) => setField('contactName', e.target.value)}
                         placeholder="e.g. John Davies"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">
                         Role / Job Title
                       </label>
-                      <input
+                      <select
                         value={form.jobTitle}
                         onChange={(e) => setField('jobTitle', e.target.value)}
-                        placeholder="e.g. School Business Manager / Nurse"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
-                      />
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 text-[#1d1d1f] cursor-pointer"
+                      >
+                        <option value="Principal">Principal</option>
+                        <option value="Headteacher">Headteacher</option>
+                      </select>
                     </div>
                   </div>
 
@@ -408,7 +393,7 @@ export default function CheckoutPage() {
                         value={form.contactEmail}
                         onChange={(e) => setField('contactEmail', e.target.value)}
                         placeholder="e.g. sbm@school.sch.uk"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
                     <div>
@@ -418,8 +403,8 @@ export default function CheckoutPage() {
                       <input
                         value={form.contactPhone}
                         onChange={(e) => setField('contactPhone', e.target.value)}
-                        placeholder="e.g. 020 7946 0123"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        placeholder="e.g. 0161 973 3552"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
                   </div>
@@ -435,7 +420,7 @@ export default function CheckoutPage() {
                     setError('');
                     setStep('delivery');
                   }}
-                  className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#096556]/20 transition-all"
+                  className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#09653d]/20 transition-all apple-btn"
                 >
                   Continue to Delivery &rarr;
                 </button>
@@ -445,8 +430,8 @@ export default function CheckoutPage() {
             {/* Step 2: Delivery & Billing */}
             {step === 'delivery' && (
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-serif font-bold text-[#0c2340]">Delivery & Billing Details</h2>
+              <div>
+                  <h2 className="text-xl font-serif font-bold text-[#1d1d1f]">Delivery & Billing Details</h2>
                   <p className="text-xs text-stone-500 mt-1">
                     Emergency adrenaline supplies must be delivered to the official school reception address.
                   </p>
@@ -462,7 +447,7 @@ export default function CheckoutPage() {
                       value={form.deliveryAddress1}
                       onChange={(e) => setField('deliveryAddress1', e.target.value)}
                       placeholder="e.g. School Lane"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                   <div>
@@ -473,7 +458,7 @@ export default function CheckoutPage() {
                       value={form.deliveryAddress2}
                       onChange={(e) => setField('deliveryAddress2', e.target.value)}
                       placeholder="e.g. Main Office / Medical Room"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -486,7 +471,7 @@ export default function CheckoutPage() {
                         value={form.deliveryCity}
                         onChange={(e) => setField('deliveryCity', e.target.value)}
                         placeholder="e.g. London"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
                     <div>
@@ -498,7 +483,7 @@ export default function CheckoutPage() {
                         value={form.deliveryPostcode}
                         onChange={(e) => setField('deliveryPostcode', e.target.value)}
                         placeholder="e.g. SW1A 1AA"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 font-mono uppercase"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono uppercase"
                       />
                     </div>
                   </div>
@@ -511,40 +496,40 @@ export default function CheckoutPage() {
                       id="sameBilling"
                       checked={form.sameAsBilling}
                       onChange={(e) => setField('sameAsBilling', e.target.checked)}
-                      className="w-4 h-4 rounded border-stone-300 text-[#096556] focus:ring-[#096556]"
+                      className="w-4 h-4 rounded border-stone-300 text-[#09653d] focus:ring-[#09653d]"
                     />
-                    <label htmlFor="sameBilling" className="text-xs font-bold text-[#0c2340] cursor-pointer">
+                    <label htmlFor="sameBilling" className="text-xs font-bold text-[#1d1d1f] cursor-pointer">
                       Billing address is identical to delivery school address
                     </label>
                   </div>
 
                   {!form.sameAsBilling && (
                     <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-3">
-                      <h4 className="font-serif font-bold text-xs text-[#0c2340]">Multi-Academy Trust or Central Finance Address</h4>
+                      <h4 className="font-serif font-bold text-xs text-[#1d1d1f]">Multi-Academy Trust or Central Finance Address</h4>
                       <input
                         value={form.billingOrgName}
                         onChange={(e) => setField('billingOrgName', e.target.value)}
                         placeholder="Trust / LA / Finance Department Name"
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#096556] bg-white"
+                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#09653d] bg-white"
                       />
                       <input
                         value={form.billingAddress1}
                         onChange={(e) => setField('billingAddress1', e.target.value)}
                         placeholder="Billing Address Line 1"
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#096556] bg-white"
+                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#09653d] bg-white"
                       />
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           value={form.billingCity}
                           onChange={(e) => setField('billingCity', e.target.value)}
                           placeholder="City"
-                          className="px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#096556] bg-white"
+                          className="px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#09653d] bg-white"
                         />
                         <input
                           value={form.billingPostcode}
                           onChange={(e) => setField('billingPostcode', e.target.value)}
                           placeholder="Postcode"
-                          className="px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#096556] bg-white uppercase font-mono"
+                          className="px-3.5 py-2 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-[#09653d] bg-white uppercase font-mono"
                         />
                       </div>
                     </div>
@@ -555,7 +540,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setStep('school')}
-                    className="py-3 px-6 rounded-full border border-stone-200 text-[#0c2340] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors"
+                    className="py-3 px-6 rounded-full border border-stone-200 text-[#1d1d1f] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back
                   </button>
@@ -569,7 +554,7 @@ export default function CheckoutPage() {
                       setError('');
                       setStep('payment');
                     }}
-                    className="flex-1 py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#096556]/20 transition-all"
+                    className="flex-1 py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#09653d]/20 transition-all apple-btn"
                   >
                     Continue to Payment &rarr;
                   </button>
@@ -578,284 +563,253 @@ export default function CheckoutPage() {
             )}
 
             {/* Step 3: Payment */}
-            {step === 'payment' && (
-              <div className="space-y-6">
+            <div className={step === 'payment' ? 'space-y-6' : 'hidden'}>
+              <div>
+                <h2 className="text-xl font-serif font-bold text-[#1d1d1f]">Select Payment Method</h2>
+                <p className="text-xs text-stone-500 mt-1">
+                  Choose between 30-Day official educational invoice or instant online payment via Stripe.
+                </p>
+              </div>
+
+              {/* Payment Method Selector (2 Clean Choice Buttons) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setField('paymentMethod', 'bacs_invoice')}
+                  className={`p-4 rounded-2xl border text-left transition-all apple-btn flex items-center justify-between ${
+                    form.paymentMethod === 'bacs_invoice'
+                      ? 'border-[#09653d] bg-emerald-50/70 ring-2 ring-[#09653d]/20 shadow-xs'
+                      : 'border-stone-200 hover:border-stone-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                        form.paymentMethod === 'bacs_invoice' ? 'border-[#09653d]' : 'border-stone-300'
+                      }`}
+                    >
+                      {form.paymentMethod === 'bacs_invoice' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#09653d]" />
+                      )}
+                    </div>
+                    <FileText className="w-5 h-5 text-[#09653d] shrink-0" />
+                    <div>
+                      <p className="font-bold text-sm text-[#1d1d1f]">30-Day BACS Invoice</p>
+                      <p className="text-[11px] text-stone-500 font-sans">Official school payment terms</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#09653d] text-white shrink-0">
+                    School Choice
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setField('paymentMethod', 'card');
+                    if (!stripeClientSecret) initStripePaymentIntent();
+                  }}
+                  className={`p-4 rounded-2xl border text-left transition-all apple-btn flex items-center justify-between ${
+                    form.paymentMethod === 'card'
+                      ? 'border-[#09653d] bg-emerald-50/70 ring-2 ring-[#09653d]/20 shadow-xs'
+                      : 'border-stone-200 hover:border-stone-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                        form.paymentMethod === 'card' ? 'border-[#09653d]' : 'border-stone-300'
+                      }`}
+                    >
+                      {form.paymentMethod === 'card' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#09653d]" />
+                      )}
+                    </div>
+                    <CreditCard className="w-5 h-5 text-[#09653d] shrink-0" />
+                    <div>
+                      <p className="font-bold text-sm text-[#1d1d1f]">Card Payment</p>
+                      <p className="text-[11px] text-stone-500 font-sans">Debit / credit card via Stripe</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#09653d] text-white shrink-0">
+                    Stripe Live
+                  </span>
+                </button>
+              </div>
+
+              {/* Dynamic Content Panel Below */}
+              {form.paymentMethod === 'bacs_invoice' && (
+                <div className="p-5 rounded-2xl border border-stone-200 bg-white space-y-4">
+                  <div className="flex items-start gap-3">
+                    <FileText className="w-5 h-5 text-[#09653d] shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-bold text-sm text-[#1d1d1f]">30-Day Educational Credit Terms</h4>
+                      <p className="text-xs text-stone-600 mt-1 leading-relaxed font-sans">
+                        Instant order dispatch. An official PDF invoice is generated with 30-day payment terms for your school finance department or Local Authority.
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5 font-sans">
+                      School Purchase Order (PO) Number (Optional)
+                    </label>
+                    <input
+                      value={form.poNumber}
+                      onChange={(e) => setField('poNumber', e.target.value)}
+                      placeholder="e.g. PO-2026-4821"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Stripe Card Container (Kept mounted for Stripe Elements state) */}
+              <div className={form.paymentMethod === 'card' ? 'p-5 rounded-2xl border border-stone-200 bg-white space-y-4' : 'hidden'}>
                 <div>
-                  <h2 className="text-xl font-serif font-bold text-[#0c2340]">Select Payment Method</h2>
-                  <p className="text-xs text-stone-500 mt-1">
-                    Choose between 30-Day official educational invoice or instant online payment via Stripe.
+                  <h4 className="font-bold text-sm text-[#1d1d1f]">Card Payment</h4>
+                  <p className="text-xs text-stone-600 mt-0.5 leading-relaxed font-sans">
+                    Pay securely using school debit or credit card via Stripe Live 256-bit encryption.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* BACS Option */}
-                  <button
-                    type="button"
-                    onClick={() => setField('paymentMethod', 'bacs_invoice')}
-                    className={`p-5 rounded-2xl border text-left transition-all ${
-                      form.paymentMethod === 'bacs_invoice'
-                        ? 'border-[#096556] bg-emerald-50/60 ring-2 ring-[#096556]/20 shadow-xs'
-                        : 'border-stone-200 hover:border-stone-300 bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                          form.paymentMethod === 'bacs_invoice' ? 'border-[#096556]' : 'border-stone-300'
-                        }`}
-                      >
-                        {form.paymentMethod === 'bacs_invoice' && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#096556]" />
-                        )}
-                      </div>
-                      <FileText className="w-5 h-5 text-[#096556]" />
-                      <div>
-                        <span className="font-serif font-bold text-sm text-[#0c2340]">30-Day BACS Invoice</span>
-                        <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#096556] text-white">
-                          School Choice
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-stone-600 leading-relaxed">
-                      Instant order dispatch. An official PDF invoice is generated with 30-day payment terms for your school finance department.
-                    </p>
-                    {form.paymentMethod === 'bacs_invoice' && (
-                      <div className="mt-4 pt-3 border-t border-emerald-200/60">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">
-                          School Purchase Order (PO) Number (Optional)
-                        </label>
-                        <input
-                          value={form.poNumber}
-                          onChange={(e) => setField('poNumber', e.target.value)}
-                          placeholder="e.g. PO-2026-4821"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#096556] bg-white font-mono"
-                        />
-                      </div>
-                    )}
-                  </button>
-
-                  {/* Stripe Card Option */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setField('paymentMethod', 'card');
-                      if (!stripeClientSecret) initStripePaymentIntent();
-                    }}
-                    className={`p-5 rounded-2xl border text-left transition-all ${
-                      form.paymentMethod === 'card'
-                        ? 'border-[#096556] bg-emerald-50/60 ring-2 ring-[#096556]/20 shadow-xs'
-                        : 'border-stone-200 hover:border-stone-300 bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                          form.paymentMethod === 'card' ? 'border-[#096556]' : 'border-stone-300'
-                        }`}
-                      >
-                        {form.paymentMethod === 'card' && <div className="w-2.5 h-2.5 rounded-full bg-[#096556]" />}
-                      </div>
-                      <CreditCard className="w-5 h-5 text-[#096556]" />
-                      <div>
-                        <span className="font-serif font-bold text-sm text-[#0c2340]">Card / Apple Pay</span>
-                        <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 text-stone-700">
-                          Stripe
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-stone-600 leading-relaxed">
-                      Instant online payment via school procurement debit/credit card or mobile wallet. PCI DSS Level 1 certified.
-                    </p>
-
-                    {form.paymentMethod === 'card' && (
-                      <div className="mt-4 pt-3 border-t border-emerald-200/60 space-y-3">
-                        <div className="flex items-center justify-between text-[11px] text-[#096556] font-semibold bg-emerald-100/60 p-2 rounded-xl">
-                          <span className="flex items-center gap-1.5">
-                            <Lock className="w-3.5 h-3.5" /> 256-Bit SSL Stripe Security
-                          </span>
-                          <span className="text-stone-500 font-mono text-[10px]">
-                            {isLiveStripe ? 'Live Stripe Active' : 'Stripe Ready'}
-                          </span>
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-bold uppercase text-stone-600 mb-1">
-                            Cardholder Name
-                          </label>
-                          <input
-                            value={form.cardName}
-                            onChange={(e) => setField('cardName', e.target.value)}
-                            placeholder="e.g. Mrs E Clarke"
-                            className="w-full px-3 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-[#096556] bg-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-bold uppercase text-stone-600 mb-1">
-                            Card Number
-                          </label>
-                          <input
-                            value={form.cardNumber}
-                            onChange={(e) => handleCardNumberChange(e.target.value)}
-                            placeholder="4242 4242 4242 4242"
-                            className="w-full px-3 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-[#096556] bg-white font-mono"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="block text-[11px] font-bold uppercase text-stone-600 mb-1">
-                              Expiry Date
-                            </label>
-                            <input
-                              value={form.cardExpiry}
-                              onChange={(e) => handleExpiryChange(e.target.value)}
-                              placeholder="MM/YY"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-[#096556] bg-white font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-bold uppercase text-stone-600 mb-1">
-                              Security CVC
-                            </label>
-                            <input
-                              value={form.cardCvc}
-                              onChange={(e) => handleCvcChange(e.target.value)}
-                              placeholder="123"
-                              className="w-full px-3 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-[#096556] bg-white font-mono"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </button>
-                </div>
-
-                {/* Statutory Requisition Form Generator & Upload */}
-                {requiresRequisition && (
-                  <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-5 space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-emerald-200/80">
-                      <div>
-                        <h4 className="font-serif font-bold text-sm text-[#0c2340]">Official Headteacher Requisition</h4>
-                        <p className="text-xs text-stone-600 mt-0.5">
-                          Required under Human Medicines Regulations 2017 for UK school emergency supply.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setIsReqModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#096556] border border-emerald-300 hover:bg-emerald-50 font-bold text-xs shadow-2xs transition-colors shrink-0"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Generate & Download PDF Form
-                      </button>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <Upload className="w-5 h-5 text-[#096556] shrink-0 mt-0.5" />
-                      <div>
-                        <h5 className="font-bold text-xs text-[#0c2340]">Upload Signed Requisition Form (Optional Now)</h5>
-                        <p className="text-xs text-stone-600 mt-0.5 mb-2.5 leading-relaxed">
-                          You can upload the signed form now, or reply to your order confirmation email before pharmacy courier dispatch.
-                        </p>
-                        <label className="block">
-                          <span className="sr-only">Upload requisition</span>
-                          <input
-                            type="file"
-                            accept=".pdf,.png,.jpg,.jpeg"
-                            onChange={(e) => setField('requisitionDocName', e.target.files?.[0]?.name || '')}
-                            className="text-xs text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#096556] file:text-white hover:file:bg-[#075246] cursor-pointer"
-                          />
-                        </label>
-                        {form.requisitionDocName && (
-                          <p className="mt-2 text-xs text-emerald-800 font-semibold flex items-center gap-1">
-                            <CheckCircle className="w-3.5 h-3.5 text-[#096556]" /> Attached: {form.requisitionDocName}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                {isInitializingStripe ? (
+                  <div className="py-8 text-center space-y-2">
+                    <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[#09653d]" />
+                    <p className="text-xs font-semibold text-slate-600 font-sans">Connecting to Stripe secure gateway...</p>
+                  </div>
+                ) : stripeClientSecret ? (
+                  <StripePaymentSection
+                    ref={stripeRef}
+                    clientSecret={stripeClientSecret}
+                    totalAmount={total}
+                    schoolName={form.schoolName}
+                  />
+                ) : (
+                  <div className="py-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => initStripePaymentIntent()}
+                      className="px-4 py-2 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white text-xs font-semibold"
+                    >
+                      Initialize Stripe Gateway
+                    </button>
                   </div>
                 )}
-
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setStep('delivery')}
-                    className="py-3 px-6 rounded-full border border-stone-200 text-[#0c2340] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4" /> Back
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (form.paymentMethod === 'card') {
-                        const cleanCard = form.cardNumber.replace(/\s+/g, '');
-                        if (cleanCard.length < 15) {
-                          setError('Please enter a 16-digit card number.');
-                          return;
-                        }
-                        if (form.cardExpiry.length < 5) {
-                          setError('Please enter an expiry date (MM/YY).');
-                          return;
-                        }
-                      }
-                      setError('');
-                      setStep('confirm');
-                    }}
-                    className="flex-1 py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#096556]/20 transition-all"
-                  >
-                    Review Order &rarr;
-                  </button>
-                </div>
               </div>
-            )}
+
+              {/* Statutory Requisition Form Generator & Upload */}
+              {requiresRequisition && (
+                <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-5 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-emerald-200/80">
+                    <div>
+                      <h4 className="font-serif font-bold text-sm text-[#1d1d1f]">Official Headteacher Requisition</h4>
+                      <p className="text-xs text-stone-600 mt-0.5 font-sans">
+                        Required for statutory school emergency auto-injector supply.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsReqModalOpen(true)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#09653d] border border-emerald-300 hover:bg-emerald-50 font-bold text-xs shadow-2xs transition-colors shrink-0 apple-btn"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Generate & Download PDF Form
+                    </button>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Upload className="w-5 h-5 text-[#09653d] shrink-0 mt-0.5" />
+                    <div>
+                      <h5 className="font-bold text-xs text-[#1d1d1f]">Upload Signed Requisition Form (Optional Now)</h5>
+                      <p className="text-xs text-stone-600 mt-0.5 mb-2.5 leading-relaxed font-sans">
+                        You can upload the signed form now, or reply to your order confirmation email before pharmacy courier dispatch.
+                      </p>
+                      <label className="block">
+                        <span className="sr-only">Upload requisition</span>
+                        <input
+                          type="file"
+                          accept=".pdf,.png,.jpg,.jpeg"
+                          onChange={(e) => setField('requisitionDocName', e.target.files?.[0]?.name || '')}
+                          className="text-xs text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#09653d] file:text-white hover:file:bg-[#064e2e] cursor-pointer"
+                        />
+                      </label>
+                      {form.requisitionDocName && (
+                        <p className="mt-2 text-xs text-emerald-800 font-semibold flex items-center gap-1 font-sans">
+                          <CheckCircle className="w-3.5 h-3.5 text-[#09653d]" /> Attached: {form.requisitionDocName}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setStep('delivery')}
+                  className="py-3 px-6 rounded-full border border-stone-200 text-[#1d1d1f] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors apple-btn"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setError('');
+                    setStep('confirm');
+                  }}
+                  className="flex-1 py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#09653d]/20 transition-all apple-btn"
+                >
+                  Review Order &rarr;
+                </button>
+              </div>
+            </div>
 
             {/* Step 4: Confirm */}
             {step === 'confirm' && (
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-serif font-bold text-[#0c2340]">Review & Confirm Order</h2>
-                  <p className="text-xs text-stone-500 mt-1">
-                    Please verify your school details and accept statutory pharmacy supply declarations.
-                  </p>
-                </div>
+              <div>
+                <h2 className="text-xl font-serif font-bold text-[#1d1d1f]">Review & Confirm Order</h2>
+                <p className="text-xs text-stone-500 mt-1">
+                  Please verify your school details and accept statutory pharmacy supply declarations.
+                </p>
+              </div>
 
-                <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">School:</span>
-                    <span className="font-bold text-[#0c2340]">{form.schoolName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">Official Contact:</span>
-                    <span className="font-bold text-[#0c2340]">
-                      {form.contactName} ({form.contactEmail})
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">Delivery Address:</span>
-                    <span className="font-bold text-[#0c2340]">
-                      {form.deliveryAddress1}, {form.deliveryCity} {form.deliveryPostcode}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">Payment Selection:</span>
-                    <span className="font-bold text-[#096556]">
-                      {form.paymentMethod === 'bacs_invoice'
-                        ? '30-Day BACS School Invoice'
-                        : `Stripe Card Payment (Ending in ${form.cardNumber.replace(/\s+/g, '').slice(-4) || 'Card'})`}
-                    </span>
-                  </div>
+              <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-stone-500">School:</span>
+                  <span className="font-bold text-[#1d1d1f]">{form.schoolName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Official Contact:</span>
+                  <span className="font-bold text-[#1d1d1f]">
+                    {form.contactName} ({form.contactEmail})
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Delivery Address:</span>
+                  <span className="font-bold text-[#1d1d1f]">
+                    {form.deliveryAddress1}, {form.deliveryCity} {form.deliveryPostcode}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Payment Selection:</span>
+                  <span className="font-bold text-[#09653d]">
+                    {form.paymentMethod === 'bacs_invoice'
+                      ? '30-Day BACS School Invoice'
+                      : 'Card Payment (Live Stripe Verified)'}
+                  </span>
+                </div>
                   {form.poNumber && (
                     <div className="flex justify-between">
                       <span className="text-stone-500">Purchase Order:</span>
-                      <span className="font-bold text-[#0c2340]">{form.poNumber}</span>
+                      <span className="font-bold text-[#1d1d1f]">{form.poNumber}</span>
                     </div>
                   )}
                   {form.requisitionDocName && (
                     <div className="flex justify-between">
                       <span className="text-stone-500">Signed Requisition:</span>
                       <span className="font-semibold text-emerald-800 flex items-center gap-1">
-                        <CheckCircle className="w-3.5 h-3.5 text-[#096556]" />
+                        <CheckCircle className="w-3.5 h-3.5 text-[#09653d]" />
                         {form.requisitionDocName}
                       </span>
                     </div>
@@ -869,16 +823,16 @@ export default function CheckoutPage() {
                       type="checkbox"
                       checked={form.acceptTerms}
                       onChange={(e) => setField('acceptTerms', e.target.checked)}
-                      className="mt-1 w-4 h-4 rounded border-stone-300 text-[#096556] focus:ring-[#096556]"
+                      className="mt-1 w-4 h-4 rounded border-stone-300 text-[#09653d] focus:ring-[#09653d]"
                     />
                     <span className="text-xs text-stone-600 leading-relaxed">
                       I confirm that I am authorized to order emergency medical supplies on behalf of{' '}
                       <strong>{form.schoolName || 'the school'}</strong> and agree to the{' '}
-                      <Link href="/terms" target="_blank" className="text-[#096556] underline font-semibold">
+                      <Link href="/terms" target="_blank" className="text-[#09653d] underline font-semibold">
                         Terms of Supply
                       </Link>{' '}
                       and{' '}
-                      <Link href="/privacy" target="_blank" className="text-[#096556] underline font-semibold">
+                      <Link href="/privacy" target="_blank" className="text-[#09653d] underline font-semibold">
                         Privacy Policy
                       </Link>
                       .
@@ -890,12 +844,11 @@ export default function CheckoutPage() {
                       type="checkbox"
                       checked={form.acceptPharmacyTerms}
                       onChange={(e) => setField('acceptPharmacyTerms', e.target.checked)}
-                      className="mt-1 w-4 h-4 rounded border-stone-300 text-[#096556] focus:ring-[#096556]"
+                      className="mt-1 w-4 h-4 rounded border-stone-300 text-[#09653d] focus:ring-[#09653d]"
                     />
                     <span className="text-xs text-stone-600 leading-relaxed">
                       I confirm these emergency adrenaline auto-injectors are held for emergency use in school compliance
-                      under Regulation 214 of the Human Medicines Regulations 2017, and a Headteacher Requisition will be
-                      retained on file.
+                      for pupils, and an official Headteacher Requisition is held or submitted.
                     </span>
                   </label>
                 </div>
@@ -904,7 +857,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setStep('payment')}
-                    className="py-3 px-6 rounded-full border border-stone-200 text-[#0c2340] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors"
+                    className="py-3 px-6 rounded-full border border-stone-200 text-[#1d1d1f] font-semibold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back
                   </button>
@@ -912,7 +865,7 @@ export default function CheckoutPage() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 py-4 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#096556]/25 transition-all"
+                    className="flex-1 py-4 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#09653d]/25 transition-all"
                   >
                     {isSubmitting ? (
                       <>
@@ -938,7 +891,7 @@ export default function CheckoutPage() {
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-4">
             <div className="bg-white rounded-3xl border border-stone-200/90 shadow-xs p-5 sticky top-24">
-              <h3 className="font-serif font-bold text-[#0c2340] mb-4">Your School Order</h3>
+              <h3 className="font-serif font-bold text-[#1d1d1f] mb-4">Your School Order</h3>
               <div className="space-y-3 mb-4">
                 {items.map((item) => (
                   <div key={item.product.id} className="flex items-center gap-3 text-sm">
@@ -959,12 +912,12 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-[#0c2340] text-xs truncate">
+                      <p className="font-semibold text-[#1d1d1f] text-xs truncate">
                         {item.product.brand} {item.product.strength.includes('300') ? '300mcg' : '150mcg'}
                       </p>
                       <p className="text-stone-400 text-xs">×{item.quantity}</p>
                     </div>
-                    <span className="font-serif font-bold text-xs text-[#0c2340]">
+                    <span className="font-serif font-bold text-xs text-[#1d1d1f]">
                       £{(item.product.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -981,23 +934,39 @@ export default function CheckoutPage() {
                   <span>£{vatTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-stone-600">
-                  <span>Tracked Medical Courier</span>
-                  <span className="text-[#096556] font-bold">FREE</span>
+                  <span>Tracked Medical Courier (3–4 days)</span>
+                  <span className="text-[#09653d] font-bold">FREE</span>
                 </div>
-                <div className="flex justify-between font-serif font-bold text-[#0c2340] text-lg pt-2 border-t border-stone-100">
+                <div className="flex justify-between font-serif font-bold text-[#1d1d1f] text-lg pt-2 border-t border-stone-100">
                   <span>Total</span>
                   <span>£{total.toFixed(2)}</span>
                 </div>
               </div>
 
+              {/* Expiry Reminder Disclaimer */}
+              <div className="mt-4 p-3.5 bg-emerald-500/[0.08] border border-[#09653d]/20 rounded-2xl flex items-start gap-2.5 text-xs text-slate-700">
+                <BellRing className="w-4 h-4 text-[#09653d] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-[#1d1d1f]">We&apos;ll remind you when your pens expire</p>
+                  <p className="text-[11px] text-slate-500 font-sans leading-relaxed">
+                    Automated email reminders at 12, 6, 3, and 1 month ensure your school never holds lapsed stock.
+                  </p>
+                </div>
+              </div>
+
+              {/* Urgency Timer */}
+              <div className="mt-3">
+                <UrgencyTimer variant="inline" />
+              </div>
+
               {/* Pharmacy reassurance */}
-              <div className="mt-5 pt-4 border-t border-stone-100 space-y-2 text-[11px] text-stone-500">
+              <div className="mt-4 pt-4 border-t border-stone-100 space-y-2 text-[11px] text-stone-500">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#096556] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#09653d] shrink-0" />
                   <span>GPhC Registered UK Pharmacy Dispensed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-[#096556] shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#09653d] shrink-0" />
                   <span>Maximum Expiry Guaranteed & Tracked</span>
                 </div>
               </div>

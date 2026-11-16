@@ -9,10 +9,6 @@ if (typeof WebSocket === 'undefined') {
   neonConfig.webSocketConstructor = ws;
 }
 
-// Default Neon PostgreSQL connection for production cloud deployments
-const DEFAULT_NEON_DATABASE_URL =
-  'postgresql://neondb_owner:npg_d8cUY7vneXwA@ep-dark-tree-b5vm59ll-pooler.c-7.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require';
-
 // Check if DATABASE_URL is in environment
 let databaseUrl = process.env.DATABASE_URL;
 
@@ -28,11 +24,6 @@ if (!databaseUrl) {
   } catch (e) {
     // Ignore error
   }
-}
-
-// If still not defined, fallback to Neon PostgreSQL so deployed environments work seamlessly
-if (!databaseUrl) {
-  databaseUrl = DEFAULT_NEON_DATABASE_URL;
 }
 
 // Convert SQLite query syntax to PostgreSQL query syntax

@@ -239,7 +239,7 @@ export default function AdminSchoolsDirectoryPage() {
 
             <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Secondary & 16+</div>
-              <div className="text-xl sm:text-2xl font-black text-blue-400 mt-1">
+              <div className="text-xl sm:text-2xl font-black text-emerald-400 mt-1">
                 {summary.totalSecondary.toLocaleString()}
               </div>
               <div className="text-[10px] text-slate-400 mt-0.5">Ages 11 &ndash; 18+</div>
@@ -303,7 +303,7 @@ export default function AdminSchoolsDirectoryPage() {
                   onClick={() => handleFilterChange(setStatusFilter, 'all')}
                   className={`px-3 py-1.5 rounded-lg transition-colors ${
                     statusFilter === 'all'
-                      ? 'bg-[#096556] text-white shadow-xs font-bold'
+                      ? 'bg-[#09653d] text-white shadow-xs font-bold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -314,7 +314,7 @@ export default function AdminSchoolsDirectoryPage() {
                   onClick={() => handleFilterChange(setStatusFilter, 'customer')}
                   className={`px-3 py-1.5 rounded-lg transition-colors ${
                     statusFilter === 'customer'
-                      ? 'bg-[#096556] text-white shadow-xs font-bold'
+                      ? 'bg-[#09653d] text-white shadow-xs font-bold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -325,7 +325,7 @@ export default function AdminSchoolsDirectoryPage() {
                   onClick={() => handleFilterChange(setStatusFilter, 'prospect')}
                   className={`px-3 py-1.5 rounded-lg transition-colors ${
                     statusFilter === 'prospect'
-                      ? 'bg-[#096556] text-white shadow-xs font-bold'
+                      ? 'bg-[#09653d] text-white shadow-xs font-bold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -539,7 +539,7 @@ export default function AdminSchoolsDirectoryPage() {
                                   s.phase === 'Primary'
                                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                     : s.phase === 'Secondary'
-                                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                     : s.phase === '16 plus'
                                     ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
                                     : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
@@ -577,7 +577,7 @@ export default function AdminSchoolsDirectoryPage() {
                                   className="flex items-center gap-1 hover:text-white"
                                   title={`Email: ${s.headteacher_email || s.office_email}`}
                                 >
-                                  <Mail className="w-3 h-3 text-blue-400" />
+                                  <Mail className="w-3 h-3 text-emerald-400" />
                                   <span>Email</span>
                                 </a>
                               )}
@@ -606,7 +606,7 @@ export default function AdminSchoolsDirectoryPage() {
                                 e.stopPropagation();
                                 setSelectedSchool(s);
                               }}
-                              className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-[#096556] text-slate-200 hover:text-white text-xs font-bold transition-all shadow-xs"
+                              className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-[#09653d] text-slate-200 hover:text-white text-xs font-bold transition-all shadow-xs"
                             >
                               Dossier &rarr;
                             </button>
@@ -834,7 +834,7 @@ export default function AdminSchoolsDirectoryPage() {
                       {selectedSchool.headteacher_email ? (
                         <a
                           href={`mailto:${selectedSchool.headteacher_email}`}
-                          className="text-blue-400 hover:underline"
+                          className="text-emerald-400 hover:underline"
                         >
                           {selectedSchool.headteacher_email}
                         </a>
@@ -848,7 +848,7 @@ export default function AdminSchoolsDirectoryPage() {
                       {selectedSchool.office_email ? (
                         <a
                           href={`mailto:${selectedSchool.office_email}`}
-                          className="text-blue-400 hover:underline"
+                          className="text-emerald-400 hover:underline"
                         >
                           {selectedSchool.office_email}
                         </a>
@@ -866,7 +866,7 @@ export default function AdminSchoolsDirectoryPage() {
                   href={`/checkout?prefillSchool=${encodeURIComponent(
                     selectedSchool.name
                   )}&urn=${encodeURIComponent(selectedSchool.urn)}`}
-                  className="w-full py-3.5 rounded-xl bg-[#096556] hover:bg-[#075246] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#096556]/20 transition-all"
+                  className="w-full py-3.5 rounded-xl bg-[#09653d] hover:bg-[#064e2e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#09653d]/20 transition-all"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Create Order for this School &rarr;</span>

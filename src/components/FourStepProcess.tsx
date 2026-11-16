@@ -1,20 +1,21 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function FourStepProcess() {
   return (
-    <section className="py-20 bg-white border-y border-slate-100">
+    <section className="py-20 md:py-24 bg-white border-y border-black/[0.05]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <p className="text-xs sm:text-sm font-bold tracking-[0.2em] text-[#096556] uppercase">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#09653d]/[0.08] border border-[#09653d]/15 text-[#09653d] text-[11px] font-semibold tracking-wider uppercase">
             A SIMPLE 4-STEP PROCESS
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#0c2340] tracking-tight leading-tight">
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1d1d1f] tracking-[-0.025em] leading-tight">
             Ordering your emergency pens is easy
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+          <p className="text-slate-600 text-[15px] sm:text-base leading-relaxed max-w-2xl mx-auto font-sans">
             We take care of the paperwork and pharmacy process, so you can focus on keeping your school safe.
           </p>
         </div>
@@ -53,8 +54,8 @@ export default function FourStepProcess() {
                       <rect x="0" y="0" width="18" height="66" rx="3" fill="#bae6fd" stroke="#0284c7" strokeWidth="1.5" />
                       <rect x="2" y="4" width="14" height="12" rx="2" fill="#0284c7" />
                       <rect x="4" y="22" width="10" height="24" rx="1.5" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
-                      <line x1="6" y1="28" x2="12" y2="28" stroke="#096556" strokeWidth="1.5" />
-                      <line x1="6" y1="34" x2="12" y2="34" stroke="#096556" strokeWidth="1.5" />
+                      <line x1="6" y1="28" x2="12" y2="28" stroke="#09653d" strokeWidth="1.5" />
+                      <line x1="6" y1="34" x2="12" y2="34" stroke="#09653d" strokeWidth="1.5" />
                       <rect x="2" y="52" width="14" height="12" rx="2" fill="#0284c7" />
                     </g>
 
@@ -74,11 +75,11 @@ export default function FourStepProcess() {
                     {/* Animated Clicking Cursor with Pulse */}
                     <g className="animate-cursor-click" transform="translate(142, 88)">
                       {/* Ripple on click */}
-                      <circle cx="2" cy="2" r="14" fill="#096556" fillOpacity="0.25" className="animate-click-ripple origin-center" />
+                      <circle cx="2" cy="2" r="14" fill="#09653d" fillOpacity="0.25" className="animate-click-ripple origin-center" />
                       {/* Dark Teal Arrow Pointer */}
                       <path
                         d="M0 0L14 18L7 18L5 25L0 23L3 17L-5 17L0 0Z"
-                        fill="#096556"
+                        fill="#09653d"
                         stroke="#ffffff"
                         strokeWidth="2"
                         strokeLinejoin="round"
@@ -91,10 +92,10 @@ export default function FourStepProcess() {
 
             {/* Step Header with Circle Badge */}
             <div className="flex items-center gap-3 mb-2">
-              <span className="w-7 h-7 rounded-full bg-[#096556] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <span className="w-7 h-7 rounded-full bg-[#09653d] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                 1
               </span>
-              <h3 className="font-bold text-[#0c2340] text-lg tracking-tight">
+              <h3 className="font-bold text-[#1d1d1f] text-lg tracking-tight">
                 Choose your pens
               </h3>
             </div>
@@ -103,6 +104,15 @@ export default function FourStepProcess() {
             <p className="text-slate-600 text-sm leading-relaxed lg:pl-10 lg:pr-2">
               Select the brand, strength and quantity your school needs.
             </p>
+
+            <div className="mt-3 lg:pl-10">
+              <Link
+                href="/order-pens"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#09653d] hover:text-[#064e2e] transition-colors"
+              >
+                Select your pen &rarr;
+              </Link>
+            </div>
 
             {/* Flow Arrow to Step 2 (Desktop only) */}
             <div className="hidden lg:flex absolute -right-4 top-24 z-20 items-center justify-center text-slate-300">
@@ -127,13 +137,13 @@ export default function FourStepProcess() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     {/* Requisition Document */}
-                    <rect x="36" y="16" width="132" height="172" rx="10" fill="#ffffff" stroke="#0c2340" strokeWidth="3" />
+                    <rect x="36" y="16" width="132" height="172" rx="10" fill="#ffffff" stroke="#1d1d1f" strokeWidth="3" />
                     
                     {/* Document Title */}
-                    <text x="102" y="38" fill="#0c2340" fontSize="11" fontWeight="800" textAnchor="middle" fontFamily="sans-serif" letterSpacing="0.5">
+                    <text x="102" y="38" fill="#1d1d1f" fontSize="11" fontWeight="800" textAnchor="middle" fontFamily="sans-serif" letterSpacing="0.5">
                       REQUISITION
                     </text>
-                    <text x="102" y="52" fill="#0c2340" fontSize="11" fontWeight="800" textAnchor="middle" fontFamily="sans-serif" letterSpacing="0.5">
+                    <text x="102" y="52" fill="#1d1d1f" fontSize="11" fontWeight="800" textAnchor="middle" fontFamily="sans-serif" letterSpacing="0.5">
                       FORM
                     </text>
 
@@ -162,13 +172,13 @@ export default function FourStepProcess() {
                       <path
                         d="M52 -10 L10 74 L-4 82 L0 68 L42 -16 Z"
                         fill="#0284c7"
-                        stroke="#0c2340"
+                        stroke="#1d1d1f"
                         strokeWidth="2.5"
                       />
                       {/* Metallic Silver Grip */}
-                      <polygon points="10,74 -4,82 0,68" fill="#e2e8f0" stroke="#0c2340" strokeWidth="2" />
+                      <polygon points="10,74 -4,82 0,68" fill="#e2e8f0" stroke="#1d1d1f" strokeWidth="2" />
                       {/* Silver/Chrome Nib */}
-                      <polygon points="-4,82 -12,94 -6,90" fill="#cbd5e1" stroke="#0c2340" strokeWidth="1.5" />
+                      <polygon points="-4,82 -12,94 -6,90" fill="#cbd5e1" stroke="#1d1d1f" strokeWidth="1.5" />
                       {/* Pen Clip Accent */}
                       <line x1="44" y1="-8" x2="30" y2="18" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
                     </g>
@@ -179,10 +189,10 @@ export default function FourStepProcess() {
 
             {/* Step Header with Circle Badge */}
             <div className="flex items-center gap-3 mb-2">
-              <span className="w-7 h-7 rounded-full bg-[#096556] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <span className="w-7 h-7 rounded-full bg-[#09653d] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                 2
               </span>
-              <h3 className="font-bold text-[#0c2340] text-lg tracking-tight">
+              <h3 className="font-bold text-[#1d1d1f] text-lg tracking-tight">
                 Sign your form
               </h3>
             </div>
@@ -218,11 +228,11 @@ export default function FourStepProcess() {
                     <path
                       d="M48 24C48 19.5817 51.5817 16 56 16H120L152 48V160C152 164.418 148.418 168 144 168H56C51.5817 168 48 164.418 48 160V24Z"
                       fill="#ffffff"
-                      stroke="#0c2340"
+                      stroke="#1d1d1f"
                       strokeWidth="3"
                     />
                     {/* Folded Ear Corner */}
-                    <path d="M120 16V44C120 46.2091 121.791 48 124 48H152" fill="#e0f2fe" stroke="#0c2340" strokeWidth="3" strokeLinejoin="round" />
+                    <path d="M120 16V44C120 46.2091 121.791 48 124 48H152" fill="#e0f2fe" stroke="#1d1d1f" strokeWidth="3" strokeLinejoin="round" />
 
                     {/* Document Guidelines */}
                     <line x1="66" y1="64" x2="134" y2="64" stroke="#93c5fd" strokeWidth="3" strokeLinecap="round" />
@@ -232,12 +242,12 @@ export default function FourStepProcess() {
 
                     {/* Pulsing Upload Radar Wave */}
                     <g transform="translate(100, 142)">
-                      <circle cx="0" cy="0" r="32" fill="#096556" fillOpacity="0.2" className="animate-radar-pulse origin-center" />
+                      <circle cx="0" cy="0" r="32" fill="#09653d" fillOpacity="0.2" className="animate-radar-pulse origin-center" />
                     </g>
 
                     {/* Floating Green Upload Circle Button with Arrow */}
                     <g className="animate-upload-bounce" transform="translate(100, 142)">
-                      <circle cx="0" cy="0" r="26" fill="#096556" stroke="#0c2340" strokeWidth="3" />
+                      <circle cx="0" cy="0" r="26" fill="#09653d" stroke="#1d1d1f" strokeWidth="3" />
                       {/* White Upward Arrow */}
                       <path
                         d="M0 -12L-9 0H-4V11H4V0H9L0 -12Z"
@@ -254,10 +264,10 @@ export default function FourStepProcess() {
 
             {/* Step Header with Circle Badge */}
             <div className="flex items-center gap-3 mb-2">
-              <span className="w-7 h-7 rounded-full bg-[#096556] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <span className="w-7 h-7 rounded-full bg-[#09653d] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                 3
               </span>
-              <h3 className="font-bold text-[#0c2340] text-lg tracking-tight">
+              <h3 className="font-bold text-[#1d1d1f] text-lg tracking-tight">
                 Upload and approve
               </h3>
             </div>
@@ -294,9 +304,9 @@ export default function FourStepProcess() {
 
                     {/* Animated Horizontal Motion / Speed Lines (ample clearance on left) */}
                     <g className="animate-speed-lines">
-                      <line x1="18" y1="84" x2="48" y2="84" stroke="#0c2340" strokeWidth="3" strokeLinecap="round" />
-                      <line x1="10" y1="98" x2="44" y2="98" stroke="#0c2340" strokeWidth="3" strokeLinecap="round" />
-                      <line x1="16" y1="112" x2="42" y2="112" stroke="#0c2340" strokeWidth="3" strokeLinecap="round" />
+                      <line x1="18" y1="84" x2="48" y2="84" stroke="#1d1d1f" strokeWidth="3" strokeLinecap="round" />
+                      <line x1="10" y1="98" x2="44" y2="98" stroke="#1d1d1f" strokeWidth="3" strokeLinecap="round" />
+                      <line x1="16" y1="112" x2="42" y2="112" stroke="#1d1d1f" strokeWidth="3" strokeLinecap="round" />
                     </g>
 
                     {/* Driving Van Body (Bounces subtly with road motion) */}
@@ -305,7 +315,7 @@ export default function FourStepProcess() {
                       <path
                         d="M58 60C58 54.4772 62.4772 50 68 50H170V136H58V60Z"
                         fill="#7dd3fc"
-                        stroke="#0c2340"
+                        stroke="#1d1d1f"
                         strokeWidth="3.5"
                       />
 
@@ -313,7 +323,7 @@ export default function FourStepProcess() {
                       <path
                         d="M170 66H192C198 66 204 70 208 76L224 100C226 103 227 107 227 111V136H170V66Z"
                         fill="#7dd3fc"
-                        stroke="#0c2340"
+                        stroke="#1d1d1f"
                         strokeWidth="3.5"
                         strokeLinejoin="round"
                       />
@@ -321,11 +331,11 @@ export default function FourStepProcess() {
                       {/* Cab Windshield / Window */}
                       <path
                         d="M176 74H190C194 74 198 76 201 81L214 99C215 101 216 103 216 105V106H176V74Z"
-                        fill="#0c2340"
+                        fill="#1d1d1f"
                       />
 
                       {/* Side Door / Cab Line */}
-                      <line x1="170" y1="50" x2="170" y2="136" stroke="#0c2340" strokeWidth="3" />
+                      <line x1="170" y1="50" x2="170" y2="136" stroke="#1d1d1f" strokeWidth="3" />
 
                       {/* Medical Cross Sign on Box Body */}
                       <g transform="translate(114, 92)">
@@ -345,23 +355,23 @@ export default function FourStepProcess() {
                       {/* Rear Wheel Arch & Wheel */}
                       <g transform="translate(86, 136)">
                         {/* Wheel Arch */}
-                        <path d="M-22 0C-22 -14 22 -14 22 0" fill="#f8fafc" stroke="#0c2340" strokeWidth="3" />
+                        <path d="M-22 0C-22 -14 22 -14 22 0" fill="#f8fafc" stroke="#1d1d1f" strokeWidth="3" />
                         {/* Dark Wheel Tyre */}
-                        <circle cx="0" cy="0" r="17" fill="#0c2340" />
+                        <circle cx="0" cy="0" r="17" fill="#1d1d1f" />
                         {/* Light Hub Rim */}
-                        <circle cx="0" cy="0" r="8" fill="#cbd5e1" stroke="#0c2340" strokeWidth="2" />
-                        <circle cx="0" cy="0" r="2.5" fill="#0c2340" />
+                        <circle cx="0" cy="0" r="8" fill="#cbd5e1" stroke="#1d1d1f" strokeWidth="2" />
+                        <circle cx="0" cy="0" r="2.5" fill="#1d1d1f" />
                       </g>
 
                       {/* Front Wheel Arch & Wheel */}
                       <g transform="translate(196, 136)">
                         {/* Wheel Arch */}
-                        <path d="M-22 0C-22 -14 22 -14 22 0" fill="#f8fafc" stroke="#0c2340" strokeWidth="3" />
+                        <path d="M-22 0C-22 -14 22 -14 22 0" fill="#f8fafc" stroke="#1d1d1f" strokeWidth="3" />
                         {/* Dark Wheel Tyre */}
-                        <circle cx="0" cy="0" r="17" fill="#0c2340" />
+                        <circle cx="0" cy="0" r="17" fill="#1d1d1f" />
                         {/* Light Hub Rim */}
-                        <circle cx="0" cy="0" r="8" fill="#cbd5e1" stroke="#0c2340" strokeWidth="2" />
-                        <circle cx="0" cy="0" r="2.5" fill="#0c2340" />
+                        <circle cx="0" cy="0" r="8" fill="#cbd5e1" stroke="#1d1d1f" strokeWidth="2" />
+                        <circle cx="0" cy="0" r="2.5" fill="#1d1d1f" />
                       </g>
                     </g>
                   </svg>
@@ -371,17 +381,17 @@ export default function FourStepProcess() {
 
             {/* Step Header with Circle Badge */}
             <div className="flex items-center gap-3 mb-2">
-              <span className="w-7 h-7 rounded-full bg-[#096556] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <span className="w-7 h-7 rounded-full bg-[#09653d] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                 4
               </span>
-              <h3 className="font-bold text-[#0c2340] text-lg tracking-tight">
+              <h3 className="font-bold text-[#1d1d1f] text-lg tracking-tight">
                 We deliver
               </h3>
             </div>
 
             {/* Description */}
             <p className="text-slate-600 text-sm leading-relaxed lg:pl-10 lg:pr-2">
-              Your pens are dispatched next working day with tracked delivery from our GPhC registered pharmacy.
+              Your pens are delivered in 3 to 4 working days with tracked courier delivery from our GPhC registered pharmacy.
             </p>
           </div>
         </div>

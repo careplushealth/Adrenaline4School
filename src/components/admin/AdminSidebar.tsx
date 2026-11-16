@@ -34,7 +34,6 @@ export default function AdminSidebar() {
     { name: 'Batches & Expiry DB', href: '/admin/batches', icon: Layers },
     { name: 'Invoices & BACS Payments', href: '/admin/invoices', icon: FileText },
     { name: 'Expiry Reminders & Cron', href: '/admin/reminders', icon: BellRing },
-    { name: 'Training & Learners', href: '/admin/training', icon: GraduationCap },
     { name: 'Schools & MAT Accounts', href: '/admin/customers', icon: Building2 },
     { name: 'Content Management (CMS)', href: '/admin/content', icon: FileEdit },
     { name: 'Reports & Exports', href: '/admin/reports', icon: BarChart3 },
@@ -92,7 +91,7 @@ export default function AdminSidebar() {
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-[#096556] text-white shadow-md shadow-[#096556]/20 font-bold'
+                    ? 'bg-[#09653d] text-white shadow-md shadow-[#09653d]/20 font-bold'
                     : 'text-slate-400 hover:text-white hover:bg-navy-900/80'
                 }`}
               >

@@ -21,7 +21,7 @@ export default function AdminReportsPage() {
       `"Awaiting Pharmacy Review",${stats?.awaitingPharmacy || 0},${new Date().toISOString()}\n` +
       `"Outstanding Invoices Balance (£)",${(stats?.outstandingInvoicesBalance || 0).toFixed(2)},${new Date().toISOString()}\n` +
       `"Supplies Approaching Expiry (≤3 Months)",${stats?.approachingExpiry || 0},${new Date().toISOString()}\n` +
-      `"Staff CPD Completions",${stats?.totalCompletions || 0},${new Date().toISOString()}\n`;
+      `"Registered Customer School Accounts",${stats?.totalSchools || 0},${new Date().toISOString()}\n`;
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');

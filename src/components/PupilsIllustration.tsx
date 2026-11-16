@@ -44,21 +44,21 @@ export default function PupilsIllustration() {
           {/* Green School Blazer & White Collar */}
           <path
             d="M10 115 L20 70 L60 70 L70 115 Z"
-            fill="#096556"
-            stroke="#0c2340"
+            fill="#09653d"
+            stroke="#1d1d1f"
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
           {/* White Shirt V */}
-          <polygon points="34,70 46,70 40,86" fill="#ffffff" stroke="#0c2340" strokeWidth="1.5" />
+          <polygon points="34,70 46,70 40,86" fill="#ffffff" stroke="#1d1d1f" strokeWidth="1.5" />
           {/* Gold / Green School Tie */}
-          <polygon points="38,73 42,73 44,98 40,102 36,98" fill="#15803d" stroke="#0c2340" strokeWidth="1.2" />
+          <polygon points="38,73 42,73 44,98 40,102 36,98" fill="#15803d" stroke="#1d1d1f" strokeWidth="1.2" />
           <line x1="38" y1="80" x2="42" y2="80" stroke="#ca8a04" strokeWidth="1.5" />
           <line x1="37" y1="88" x2="43" y2="88" stroke="#ca8a04" strokeWidth="1.5" />
 
           {/* Blazer Lapels */}
-          <path d="M20 70 L34 94 L40 94" stroke="#0c2340" strokeWidth="2" fill="#075145" />
-          <path d="M60 70 L46 94 L40 94" stroke="#0c2340" strokeWidth="2" fill="#075145" />
+          <path d="M20 70 L34 94 L40 94" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
+          <path d="M60 70 L46 94 L40 94" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
         </g>
 
         {/* --- PUPIL 3 (RIGHT): Dark Hair, Green Blazer --- */}
@@ -89,21 +89,21 @@ export default function PupilsIllustration() {
           {/* Green School Blazer & White Collar */}
           <path
             d="M10 115 L20 70 L60 70 L70 115 Z"
-            fill="#096556"
-            stroke="#0c2340"
+            fill="#09653d"
+            stroke="#1d1d1f"
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
           {/* White Shirt V */}
-          <polygon points="34,70 46,70 40,86" fill="#ffffff" stroke="#0c2340" strokeWidth="1.5" />
+          <polygon points="34,70 46,70 40,86" fill="#ffffff" stroke="#1d1d1f" strokeWidth="1.5" />
           {/* Tie */}
-          <polygon points="38,73 42,73 44,98 40,102 36,98" fill="#15803d" stroke="#0c2340" strokeWidth="1.2" />
+          <polygon points="38,73 42,73 44,98 40,102 36,98" fill="#15803d" stroke="#1d1d1f" strokeWidth="1.2" />
           <line x1="38" y1="80" x2="42" y2="80" stroke="#ca8a04" strokeWidth="1.5" />
           <line x1="37" y1="88" x2="43" y2="88" stroke="#ca8a04" strokeWidth="1.5" />
 
           {/* Blazer Lapels */}
-          <path d="M20 70 L34 94 L40 94" stroke="#0c2340" strokeWidth="2" fill="#075145" />
-          <path d="M60 70 L46 94 L40 94" stroke="#0c2340" strokeWidth="2" fill="#075145" />
+          <path d="M20 70 L34 94 L40 94" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
+          <path d="M60 70 L46 94 L40 94" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
         </g>
 
         {/* --- PUPIL 2 (CENTER): Girl with Curly Dark Hair, Holding Orange Folder --- */}
@@ -132,26 +132,26 @@ export default function PupilsIllustration() {
           {/* Green School Blazer */}
           <path
             d="M8 122 L18 76 L62 76 L72 122 Z"
-            fill="#096556"
-            stroke="#0c2340"
+            fill="#09653d"
+            stroke="#1d1d1f"
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
           {/* White Shirt V */}
-          <polygon points="34,76 46,76 40,92" fill="#ffffff" stroke="#0c2340" strokeWidth="1.5" />
-          <polygon points="38,79 42,79 44,98 40,102 36,98" fill="#15803d" stroke="#0c2340" strokeWidth="1.2" />
+          <polygon points="34,76 46,76 40,92" fill="#ffffff" stroke="#1d1d1f" strokeWidth="1.5" />
+          <polygon points="38,79 42,79 44,98 40,102 36,98" fill="#15803d" stroke="#1d1d1f" strokeWidth="1.2" />
 
           {/* Lapels */}
-          <path d="M18 76 L34 100 L40 100" stroke="#0c2340" strokeWidth="2" fill="#075145" />
-          <path d="M62 76 L46 100 L40 100" stroke="#0c2340" strokeWidth="2" fill="#075145" />
+          <path d="M18 76 L34 100 L40 100" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
+          <path d="M62 76 L46 100 L40 100" stroke="#1d1d1f" strokeWidth="2" fill="#064e2e" />
 
           {/* Orange School Folder / Book Held in Arms */}
-          <rect x="22" y="98" width="36" height="24" rx="3" fill="#ea580c" stroke="#0c2340" strokeWidth="2" />
+          <rect x="22" y="98" width="36" height="24" rx="3" fill="#ea580c" stroke="#1d1d1f" strokeWidth="2" />
           <line x1="28" y1="98" x2="28" y2="122" stroke="#ffffff" strokeWidth="1.5" />
 
           {/* Hands Holding Book */}
-          <circle cx="20" cy="110" r="5" fill="#b45309" stroke="#0c2340" strokeWidth="1.5" />
-          <circle cx="60" cy="110" r="5" fill="#b45309" stroke="#0c2340" strokeWidth="1.5" />
+          <circle cx="20" cy="110" r="5" fill="#b45309" stroke="#1d1d1f" strokeWidth="1.5" />
+          <circle cx="60" cy="110" r="5" fill="#b45309" stroke="#1d1d1f" strokeWidth="1.5" />
         </g>
       </svg>
     </div>

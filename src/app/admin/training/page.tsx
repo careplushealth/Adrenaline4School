@@ -39,28 +39,35 @@ export default function AdminTrainingPage() {
       </div>
 
       {/* Courses summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses.map((course) => (
-          <div key={course.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
-                  {course.category}
-                </span>
-                <span className="text-xs text-slate-400 font-semibold">{course.duration_minutes} Mins</span>
+      {courses.length === 0 ? (
+        <div className="bg-white rounded-2xl p-8 border border-slate-200 text-center text-slate-400">
+          <GraduationCap className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+          <p className="text-xs font-semibold text-slate-500">No training modules active in portal.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {courses.map((course) => (
+            <div key={course.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                    {course.category}
+                  </span>
+                  <span className="text-xs text-slate-400 font-semibold">{course.duration_minutes} Mins</span>
+                </div>
+                <h3 className="font-bold text-base text-navy-950 mb-2">{course.title}</h3>
+                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{course.summary}</p>
               </div>
-              <h3 className="font-bold text-base text-navy-950 mb-2">{course.title}</h3>
-              <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{course.summary}</p>
+              <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span className="text-slate-500">Pass threshold: <strong>{course.pass_mark_percentage}%</strong></span>
+                <a href={`/training/${course.slug}`} target="_blank" className="text-brand-600 font-bold hover:underline">
+                  Preview Course &nearr;
+                </a>
+              </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-slate-500">Pass threshold: <strong>{course.pass_mark_percentage}%</strong></span>
-              <a href={`/training/${course.slug}`} target="_blank" className="text-brand-600 font-bold hover:underline">
-                Preview Course &nearr;
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Staff Enrolment & Certificate Database */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -93,7 +100,7 @@ export default function AdminTrainingPage() {
                       {e.learner_name}
                       <span className="block text-[10px] text-slate-400 font-normal">{e.learner_email}</span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700 font-medium">{e.school_name || "St. Mary's CE Primary"}</td>
+                    <td className="py-3.5 px-4 text-slate-700 font-medium">{e.school_name || "School"}</td>
                     <td className="py-3.5 px-4 text-slate-800">{e.course_title}</td>
                     <td className="py-3.5 px-4 font-black text-navy-900">{e.quiz_score}%</td>
                     <td className="py-3.5 px-4">

@@ -83,7 +83,7 @@ export default function SchoolPortalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Portal Dashboard data
-  const [activeTab, setActiveTab] = useState<'stock' | 'orders' | 'invoices' | 'training'>('stock');
+  const [activeTab, setActiveTab] = useState<'stock' | 'orders' | 'invoices'>('stock');
   const [orders, setOrders] = useState<any[]>([]);
   const [supplies, setSupplies] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -131,19 +131,6 @@ export default function SchoolPortalPage() {
       } else {
         setActionError(res.error || 'Invalid school credentials.');
       }
-    }
-  };
-
-  // Demo Login Helper
-  const handleDemoLogin = async () => {
-    setLoginEmail('sbm@stmarys-school.co.uk');
-    setLoginPassword('school2026');
-    setActionError('');
-    setIsSubmitting(true);
-    const res = await login('sbm@stmarys-school.co.uk', 'school2026');
-    setIsSubmitting(false);
-    if (!res.success) {
-      setActionError(res.error || 'Demo login failed');
     }
   };
 
@@ -310,8 +297,8 @@ export default function SchoolPortalPage() {
     return (
       <div className="min-h-screen bg-[#f8fbfb] flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-[#096556] border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#0c2340]">Loading School Portal...</p>
+          <div className="w-10 h-10 border-3 border-[#09653d] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#1d1d1f]">Loading School Portal...</p>
         </div>
       </div>
     );
@@ -322,27 +309,27 @@ export default function SchoolPortalPage() {
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#f8fbfb] py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
         <div className="max-w-xl mx-auto space-y-6">
           {/* Header Branding */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-              <Shield className="w-3.5 h-3.5 text-[#096556]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#09653d]/[0.08] border border-[#09653d]/15 text-[#09653d] text-xs font-semibold">
+              <Shield className="w-3.5 h-3.5 text-[#09653d]" />
               NHS & DfE Compliant School Gateway
             </div>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0c2340]">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1d1d1f] tracking-tight">
               School Allergy Portal
             </h1>
-            <p className="text-xs sm:text-sm text-stone-500 max-w-md mx-auto">
-              Secure portal for UK Schools, Academies & MATs to monitor emergency adrenaline stock, track orders, and manage staff allergy training.
+            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto font-sans">
+              Secure portal for UK Schools, Academies & MATs to monitor emergency adrenaline stock, track orders, and view BACS invoices.
             </p>
           </div>
 
-          {/* Main Auth Container */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm space-y-6">
+          {/* Main Auth Container — Apple Card */}
+          <div className="bg-[#f5f5f7] rounded-[32px] p-6 sm:p-8 border border-black/[0.06] shadow-2xs space-y-6">
             {/* View Switcher Tabs (when not in verify or forgot) */}
             {authView !== 'verify' && authView !== 'forgot' && (
-              <div className="grid grid-cols-2 p-1 bg-stone-100 rounded-2xl text-xs font-semibold">
+              <div className="grid grid-cols-2 p-1 bg-black/[0.05] rounded-full text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => {
@@ -350,10 +337,10 @@ export default function SchoolPortalPage() {
                     setActionError('');
                     setActionSuccess('');
                   }}
-                  className={`py-2.5 rounded-xl transition-all ${
+                  className={`py-2 rounded-full transition-all apple-btn ${
                     authView === 'login'
-                      ? 'bg-white text-[#0c2340] shadow-xs'
-                      : 'text-stone-500 hover:text-[#0c2340]'
+                      ? 'bg-white text-[#1d1d1f] shadow-xs'
+                      : 'text-slate-500 hover:text-[#1d1d1f]'
                   }`}
                 >
                   Sign In to School
@@ -365,10 +352,10 @@ export default function SchoolPortalPage() {
                     setActionError('');
                     setActionSuccess('');
                   }}
-                  className={`py-2.5 rounded-xl transition-all ${
+                  className={`py-2 rounded-full transition-all apple-btn ${
                     authView === 'register'
-                      ? 'bg-white text-[#0c2340] shadow-xs'
-                      : 'text-stone-500 hover:text-[#0c2340]'
+                      ? 'bg-white text-[#1d1d1f] shadow-xs'
+                      : 'text-slate-500 hover:text-[#1d1d1f]'
                   }`}
                 >
                   Register New School
@@ -385,7 +372,7 @@ export default function SchoolPortalPage() {
             )}
             {actionSuccess && (
               <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#096556] shrink-0 mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-[#09653d] shrink-0 mt-0.5" />
                 <span>{actionSuccess}</span>
               </div>
             )}
@@ -405,7 +392,7 @@ export default function SchoolPortalPage() {
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="e.g. sbm@stmarys-school.co.uk"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                 </div>
@@ -423,7 +410,7 @@ export default function SchoolPortalPage() {
                         setActionError('');
                         setActionSuccess('');
                       }}
-                      className="text-xs text-[#096556] hover:underline font-semibold"
+                      className="text-xs text-[#09653d] hover:underline font-semibold"
                     >
                       Forgot password?
                     </button>
@@ -436,7 +423,7 @@ export default function SchoolPortalPage() {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                 </div>
@@ -444,7 +431,7 @@ export default function SchoolPortalPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -464,7 +451,7 @@ export default function SchoolPortalPage() {
                       setActionError('');
                       setActionSuccess('');
                     }}
-                    className="text-xs text-stone-500 hover:text-[#096556] transition-colors"
+                    className="text-xs text-stone-500 hover:text-[#09653d] transition-colors"
                   >
                     Need to enter a verification code? <span className="font-semibold underline">Verify email here</span>
                   </button>
@@ -506,7 +493,7 @@ export default function SchoolPortalPage() {
                           placeholder="e.g. Oakridge Primary School"
                           value={regData.schoolName}
                           onChange={(e) => setRegData({ ...regData, schoolName: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                         />
                       </div>
                     )}
@@ -522,7 +509,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. 102941"
                       value={regData.urn}
                       onChange={(e) => setRegData({ ...regData, urn: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 font-mono"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono"
                     />
                   </div>
 
@@ -536,7 +523,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. SW1A 1AA"
                       value={regData.postcode}
                       onChange={(e) => setRegData({ ...regData, postcode: e.target.value.toUpperCase() })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 uppercase"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 uppercase"
                     />
                   </div>
 
@@ -550,7 +537,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. Manchester"
                       value={regData.townCity}
                       onChange={(e) => setRegData({ ...regData, townCity: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
 
@@ -564,7 +551,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. Mrs Eleanor Clarke"
                       value={regData.headteacherName}
                       onChange={(e) => setRegData({ ...regData, headteacherName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
 
@@ -578,7 +565,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. Sarah Jenkins"
                       value={regData.contactName}
                       onChange={(e) => setRegData({ ...regData, contactName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
 
@@ -592,7 +579,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. School Business Manager"
                       value={regData.jobTitle}
                       onChange={(e) => setRegData({ ...regData, jobTitle: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
 
@@ -606,7 +593,7 @@ export default function SchoolPortalPage() {
                       placeholder="e.g. office@schoolname.sch.uk"
                       value={regData.email}
                       onChange={(e) => setRegData({ ...regData, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                     <p className="text-[11px] text-stone-400 mt-1">
                       Please use your designated school or trust email for UK regulatory compliance.
@@ -623,7 +610,7 @@ export default function SchoolPortalPage() {
                       placeholder="Min 8 characters"
                       value={regData.password}
                       onChange={(e) => setRegData({ ...regData, password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
 
@@ -637,7 +624,7 @@ export default function SchoolPortalPage() {
                       placeholder="Repeat password"
                       value={regData.confirmPassword}
                       onChange={(e) => setRegData({ ...regData, confirmPassword: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                     />
                   </div>
                 </div>
@@ -645,7 +632,7 @@ export default function SchoolPortalPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -662,14 +649,14 @@ export default function SchoolPortalPage() {
             {/* 3. VERIFY EMAIL PIN (6 DIGITS) */}
             {authView === 'verify' && (
               <form onSubmit={handleVerifySubmit} className="space-y-6 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#096556] flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#09653d] flex items-center justify-center mx-auto">
                   <KeyRound className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-serif font-bold text-[#0c2340]">Enter 6-Digit Verification PIN</h3>
+                  <h3 className="text-lg font-serif font-bold text-[#1d1d1f]">Enter 6-Digit Verification PIN</h3>
                   <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
                     We sent a one-time security code to{' '}
-                    <span className="font-semibold text-[#0c2340]">{verifyEmail || 'your school email'}</span>.
+                    <span className="font-semibold text-[#1d1d1f]">{verifyEmail || 'your school email'}</span>.
                   </p>
                 </div>
 
@@ -681,7 +668,7 @@ export default function SchoolPortalPage() {
                     placeholder="Enter your email to verify"
                     value={verifyEmail}
                     onChange={(e) => setVerifyEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                   />
                 )}
 
@@ -696,23 +683,17 @@ export default function SchoolPortalPage() {
                       value={digit}
                       onChange={(e) => handlePinChange(idx, e.target.value)}
                       onKeyDown={(e) => handlePinKeyDown(idx, e)}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center font-mono font-bold text-lg sm:text-xl rounded-xl border-2 border-stone-200 focus:border-[#096556] focus:outline-none bg-stone-50/50 text-[#0c2340] transition-colors"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center font-mono font-bold text-lg sm:text-xl rounded-xl border-2 border-stone-200 focus:border-[#09653d] focus:outline-none bg-stone-50/50 text-[#1d1d1f] transition-colors"
                     />
                   ))}
                 </div>
 
-                {demoCodeHint && (
-                  <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-600 text-[11px] font-mono text-center">
-                    <span>Dev Preview Note: Code logged as </span>
-                    <strong className="text-[#096556] font-bold">{demoCodeHint}</strong>
-                    <p className="text-[10px] text-stone-400 mt-0.5">Connect RESEND_API_KEY in .env.local for automatic school inbox delivery</p>
-                  </div>
-                )}
+
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -729,7 +710,7 @@ export default function SchoolPortalPage() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={resendCooldown > 0}
-                    className="text-[#096556] hover:underline font-semibold disabled:opacity-50 disabled:no-underline"
+                    className="text-[#09653d] hover:underline font-semibold disabled:opacity-50 disabled:no-underline"
                   >
                     {resendCooldown > 0 ? `Resend Code in ${resendCooldown}s` : 'Resend Code'}
                   </button>
@@ -740,7 +721,7 @@ export default function SchoolPortalPage() {
                       setActionError('');
                       setActionSuccess('');
                     }}
-                    className="text-stone-500 hover:text-[#0c2340]"
+                    className="text-stone-500 hover:text-[#1d1d1f]"
                   >
                     &larr; Back to Sign In
                   </button>
@@ -752,7 +733,7 @@ export default function SchoolPortalPage() {
             {authView === 'forgot' && (
               <div className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-lg font-serif font-bold text-[#0c2340]">Reset School Account Password</h3>
+                  <h3 className="text-lg font-serif font-bold text-[#1d1d1f]">Reset School Account Password</h3>
                   <p className="text-xs text-stone-500 mt-1">
                     {forgotStep === 'request'
                       ? 'Enter your registered school email to receive a password reset code.'
@@ -772,14 +753,14 @@ export default function SchoolPortalPage() {
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         placeholder="e.g. sbm@stmarys-school.co.uk"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
                         <RefreshCw className="w-4 h-4 animate-spin" />
@@ -793,11 +774,6 @@ export default function SchoolPortalPage() {
                   </form>
                 ) : (
                   <form onSubmit={handleForgotConfirm} className="space-y-4">
-                    {demoCodeHint && (
-                      <div className="p-2 text-center rounded-xl bg-emerald-50 text-emerald-800 text-xs font-mono">
-                        Reset Code: <span className="font-bold">{demoCodeHint}</span>
-                      </div>
-                    )}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">
                         6-Digit Reset Code
@@ -809,7 +785,7 @@ export default function SchoolPortalPage() {
                         onChange={(e) => setResetCode(e.target.value)}
                         placeholder="123456"
                         maxLength={6}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50 font-mono tracking-widest text-center"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono tracking-widest text-center"
                       />
                     </div>
                     <div>
@@ -822,14 +798,14 @@ export default function SchoolPortalPage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#096556] bg-stone-50/50"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 rounded-full bg-[#096556] hover:bg-[#075246] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#096556]/20 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-[#09653d]/20 transition-all flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
                         <RefreshCw className="w-4 h-4 animate-spin" />
@@ -851,7 +827,7 @@ export default function SchoolPortalPage() {
                       setActionError('');
                       setActionSuccess('');
                     }}
-                    className="text-xs text-stone-500 hover:text-[#0c2340]"
+                    className="text-xs text-stone-500 hover:text-[#1d1d1f]"
                   >
                     &larr; Back to Sign In
                   </button>
@@ -860,29 +836,7 @@ export default function SchoolPortalPage() {
             )}
           </div>
 
-          {/* Discreet Developer / Sandbox Testing Panel */}
-          <div className="mt-8 text-center">
-            <details className="inline-block text-left text-xs text-stone-400 group">
-              <summary className="cursor-pointer hover:text-stone-600 font-semibold list-none text-center select-none py-1">
-                ⚙️ Testing & Development Shortcuts
-              </summary>
-              <div className="mt-3 p-4 bg-white rounded-2xl border border-stone-200 text-stone-600 text-xs shadow-xs space-y-2.5 max-w-sm mx-auto">
-                <p className="font-bold text-[#0c2340]">Pre-loaded Test School Account</p>
-                <div className="text-[11px] font-mono bg-stone-50 p-2 rounded-lg border border-stone-100 space-y-1">
-                  <div>Email: <span className="text-[#0c2340] font-semibold">sbm@stmarys-school.co.uk</span></div>
-                  <div>Password: <span className="text-[#0c2340] font-semibold">school2026</span></div>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleDemoLogin}
-                  disabled={isSubmitting}
-                  className="w-full py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#0c2340] font-bold text-xs transition-colors"
-                >
-                  Quick Sign-in to Test School &rarr;
-                </button>
-              </div>
-            </details>
-          </div>
+
         </div>
       </div>
     );
@@ -892,57 +846,57 @@ export default function SchoolPortalPage() {
   // AUTHENTICATED STATE: School Allergy Management Dashboard
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#f8fbfb] text-[#0c2340] py-10 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-white text-[#1d1d1f] py-10 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Top Header with School Profile & Sign Out */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        {/* Top Header with School Profile & Sign Out — Apple Header */}
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8 border border-black/[0.06] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#096556] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#09653d] bg-[#09653d]/[0.08] px-2.5 py-0.5 rounded-full border border-[#09653d]/15">
                 School Allergy Management Portal
               </span>
-              <span className="text-xs text-stone-400 font-normal">
+              <span className="text-xs text-slate-400 font-normal">
                 • {user?.organisationName || 'St. Mary\'s Multi-Academy Trust'}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0c2340]">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1d1d1f] tracking-tight">
               {user?.schoolName || "St. Mary's CE Primary School"}
             </h1>
-            <p className="text-xs text-stone-500">
-              DfE URN: <span className="font-mono font-semibold text-[#0c2340]">{user?.urn || '102941'}</span> · Headteacher: {user?.headteacherName || 'Mrs. Eleanor Clarke'} · {user?.townCity || 'Manchester'}
+            <p className="text-xs text-slate-500 font-sans">
+              DfE URN: <span className="font-mono font-semibold text-[#1d1d1f]">{user?.urn || '102941'}</span> · Headteacher: {user?.headteacherName || 'Mrs. Eleanor Clarke'} · {user?.townCity || 'Manchester'}
             </p>
           </div>
 
           {/* User profile capsule & Sign Out */}
           <div className="flex items-center gap-3 self-start md:self-auto">
-            <div className="bg-stone-50 rounded-2xl p-3 border border-stone-200/80 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#096556] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="bg-white rounded-2xl p-3 border border-black/[0.06] flex items-center gap-3 shadow-2xs">
+              <div className="w-9 h-9 rounded-full bg-[#09653d] text-white flex items-center justify-center font-bold text-xs shrink-0">
                 {user?.name ? user.name.charAt(0) : 'U'}
               </div>
               <div className="text-left">
-                <p className="text-xs font-bold text-[#0c2340] leading-tight">{user?.name}</p>
-                <p className="text-[10px] text-stone-500">{user?.jobTitle || 'School Business Manager'}</p>
+                <p className="text-xs font-bold text-[#1d1d1f] leading-tight">{user?.name}</p>
+                <p className="text-[10px] text-slate-500">{user?.jobTitle || 'School Business Manager'}</p>
               </div>
             </div>
 
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-red-700 transition-colors"
+              className="p-3 rounded-2xl bg-white hover:bg-red-50 text-slate-600 hover:text-red-700 transition-colors border border-black/[0.06] apple-btn shadow-2xs"
             >
               <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Dashboard Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-stone-200 pb-3">
+        {/* Dashboard Navigation Tabs — Apple Pill Navigation */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-black/[0.06] pb-3">
           <button
             onClick={() => setActiveTab('stock')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold tracking-tight transition-all flex items-center gap-2 apple-btn ${
               activeTab === 'stock'
-                ? 'bg-[#096556] text-white shadow-xs'
-                : 'text-stone-600 hover:text-[#0c2340] hover:bg-white'
+                ? 'bg-[#09653d] text-white shadow-xs'
+                : 'text-slate-600 hover:text-[#1d1d1f] hover:bg-[#f5f5f7]'
             }`}
           >
             <BellRing className="w-4 h-4" />
@@ -951,10 +905,10 @@ export default function SchoolPortalPage() {
 
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold tracking-tight transition-all flex items-center gap-2 apple-btn ${
               activeTab === 'orders'
-                ? 'bg-[#096556] text-white shadow-xs'
-                : 'text-stone-600 hover:text-[#0c2340] hover:bg-white'
+                ? 'bg-[#09653d] text-white shadow-xs'
+                : 'text-slate-600 hover:text-[#1d1d1f] hover:bg-[#f5f5f7]'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -965,24 +919,12 @@ export default function SchoolPortalPage() {
             onClick={() => setActiveTab('invoices')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === 'invoices'
-                ? 'bg-[#096556] text-white shadow-xs'
-                : 'text-stone-600 hover:text-[#0c2340] hover:bg-white'
+                ? 'bg-[#09653d] text-white shadow-xs'
+                : 'text-stone-600 hover:text-[#1d1d1f] hover:bg-white'
             }`}
           >
             <FileText className="w-4 h-4" />
             <span>Invoices & 30-Day BACS ({invoices.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('training')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-              activeTab === 'training'
-                ? 'bg-[#096556] text-white shadow-xs'
-                : 'text-stone-600 hover:text-[#0c2340] hover:bg-white'
-            }`}
-          >
-            <GraduationCap className="w-4 h-4" />
-            <span>Staff CPD Academy</span>
           </button>
         </div>
 
@@ -992,8 +934,8 @@ export default function SchoolPortalPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <BellRing className="w-5 h-5 text-[#096556]" />
-                  <h2 className="text-lg font-serif font-bold text-[#0c2340]">Registered Auto-Injector Stock</h2>
+                  <BellRing className="w-5 h-5 text-[#09653d]" />
+                  <h2 className="text-lg font-serif font-bold text-[#1d1d1f]">Registered Auto-Injector Stock</h2>
                 </div>
                 <p className="text-xs text-stone-500 mt-0.5">
                   Live auto-injectors registered at this school premises with automated batch and expiry notifications.
@@ -1002,7 +944,7 @@ export default function SchoolPortalPage() {
 
               <Link
                 href="/order-pens"
-                className="px-5 py-2.5 rounded-full bg-[#096556] hover:bg-[#075246] text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-all self-start sm:self-auto"
+                className="px-5 py-2.5 rounded-full bg-[#09653d] hover:bg-[#064e2e] text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-all self-start sm:self-auto"
               >
                 <span>Order Additional Pens</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -1018,7 +960,7 @@ export default function SchoolPortalPage() {
                   <p className="text-xs text-stone-400 mt-1">Place an order to have your school&apos;s batch monitored automatically.</p>
                   <Link
                     href="/order-pens"
-                    className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-full bg-[#096556] text-white text-xs font-semibold"
+                    className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-full bg-[#09653d] text-white text-xs font-semibold"
                   >
                     <span>Order School Pens Now</span>
                     <ArrowRight className="w-3 h-3" />
@@ -1028,7 +970,7 @@ export default function SchoolPortalPage() {
                 supplies.map((sup) => (
                   <div
                     key={sup.id}
-                    className="bg-white rounded-3xl p-6 border border-stone-200 hover:border-[#096556]/50 shadow-xs flex flex-col justify-between transition-all"
+                    className="bg-white rounded-3xl p-6 border border-stone-200 hover:border-[#09653d]/50 shadow-xs flex flex-col justify-between transition-all"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
@@ -1064,19 +1006,19 @@ export default function SchoolPortalPage() {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-serif font-bold text-sm text-[#0c2340] leading-snug">
+                          <h3 className="font-serif font-bold text-sm text-[#1d1d1f] leading-snug">
                             {sup.product_name}
                           </h3>
                           <p className="text-xs text-stone-500 mt-1">
                             Supplied: {sup.supplied_date} · Qty: {sup.quantity_supplied} Twin Pack(s)
                           </p>
-                          <p className="text-xs font-semibold text-[#0c2340] mt-2">
+                          <p className="text-xs font-semibold text-[#1d1d1f] mt-2">
                             Expiry Date:{' '}
                             <span
                               className={
                                 sup.days_remaining <= 60
                                   ? 'text-red-700 font-bold'
-                                  : 'text-[#096556] font-bold'
+                                  : 'text-[#09653d] font-bold'
                               }
                             >
                               {sup.expiry_date}
@@ -1093,7 +1035,7 @@ export default function SchoolPortalPage() {
                       {sup.reorder_token && (
                         <Link
                           href={`/reorder/${sup.reorder_token}`}
-                          className="text-xs font-semibold text-white bg-[#096556] hover:bg-[#075246] px-3.5 py-1.5 rounded-full shadow-xs transition-colors"
+                          className="text-xs font-semibold text-white bg-[#09653d] hover:bg-[#064e2e] px-3.5 py-1.5 rounded-full shadow-xs transition-colors"
                         >
                           1-Click Reorder &rarr;
                         </Link>
@@ -1109,8 +1051,8 @@ export default function SchoolPortalPage() {
         {/* TAB 2: ORDERS */}
         {activeTab === 'orders' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-xs space-y-4">
-            <h2 className="font-serif font-bold text-lg text-[#0c2340] flex items-center gap-2">
-              <Package className="w-5 h-5 text-[#096556]" />
+            <h2 className="font-serif font-bold text-lg text-[#1d1d1f] flex items-center gap-2">
+              <Package className="w-5 h-5 text-[#09653d]" />
               Recent School Orders
             </h2>
             <div className="divide-y divide-stone-100">
@@ -1120,12 +1062,12 @@ export default function SchoolPortalPage() {
                 orders.map((ord) => (
                   <div key={ord.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div>
-                      <span className="font-mono font-bold text-[#0c2340] text-sm">{ord.order_reference}</span>
+                      <span className="font-mono font-bold text-[#1d1d1f] text-sm">{ord.order_reference}</span>
                       <p className="text-[11px] text-stone-500 mt-0.5">
                         Placed: {ord.created_at?.split(' ')[0]} · Total: £{ord.total_amount?.toFixed(2)} · Method: {ord.payment_method?.replace(/_/g, ' ').toUpperCase()}
                       </p>
                       {ord.tracking_number && (
-                        <p className="text-[11px] text-[#096556] font-semibold mt-1">
+                        <p className="text-[11px] text-[#09653d] font-semibold mt-1">
                           Tracked Courier: {ord.courier_name} ({ord.tracking_number})
                         </p>
                       )}
@@ -1151,8 +1093,8 @@ export default function SchoolPortalPage() {
         {/* TAB 3: INVOICES & 30-DAY BACS */}
         {activeTab === 'invoices' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-xs space-y-4">
-            <h2 className="font-serif font-bold text-lg text-[#0c2340] flex items-center gap-2">
-              <FileText className="w-5 h-5 text-[#096556]" />
+            <h2 className="font-serif font-bold text-lg text-[#1d1d1f] flex items-center gap-2">
+              <FileText className="w-5 h-5 text-[#09653d]" />
               School Invoices & 30-Day BACS Remittance
             </h2>
             <div className="divide-y divide-stone-100">
@@ -1162,12 +1104,12 @@ export default function SchoolPortalPage() {
                 invoices.map((inv) => (
                   <div key={inv.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div>
-                      <span className="font-mono font-bold text-[#0c2340] text-sm">{inv.invoice_number}</span>
+                      <span className="font-mono font-bold text-[#1d1d1f] text-sm">{inv.invoice_number}</span>
                       <p className="text-[11px] text-stone-500 mt-0.5">
                         Due Date: {inv.due_date} · Amount: £{inv.total_amount?.toFixed(2)}
                       </p>
                       <p className="text-[11px] text-stone-500 font-mono mt-0.5">
-                        BACS Payment Ref: <span className="font-bold text-[#0c2340]">{inv.bacs_reference}</span>
+                        BACS Payment Ref: <span className="font-bold text-[#1d1d1f]">{inv.bacs_reference}</span>
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -1184,7 +1126,7 @@ export default function SchoolPortalPage() {
                         href={`/api/invoices/${inv.id}/pdf`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#0c2340] transition-colors"
+                        className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#1d1d1f] transition-colors"
                         title="Download Invoice PDF"
                       >
                         <Download className="w-4 h-4" />
@@ -1194,29 +1136,6 @@ export default function SchoolPortalPage() {
                 ))
               )}
             </div>
-          </div>
-        )}
-
-        {/* TAB 4: TRAINING ACCESS BANNER */}
-        {activeTab === 'training' && (
-          <div className="bg-[#096556] text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-serif font-bold">Staff Allergy CPD Training Academy</h3>
-                <p className="text-xs text-white/80 mt-1 max-w-xl leading-relaxed">
-                  All staff at {user?.schoolName || 'your school'} have full access to accredited anaphylaxis awareness, auto-injector administration practicals, and printable CPD certificates.
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/training"
-              className="px-6 py-3.5 rounded-full bg-white text-[#096556] hover:bg-emerald-50 font-bold text-xs uppercase tracking-wider transition-all shrink-0 shadow-md"
-            >
-              Launch Training Modules &rarr;
-            </Link>
           </div>
         )}
       </div>
