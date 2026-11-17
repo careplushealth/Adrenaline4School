@@ -108,8 +108,8 @@ export default function ContactPage() {
                 <Mail className="w-5 h-5" />
               </div>
               <h3 className="font-semibold text-[#1d1d1f] text-sm mb-1 tracking-tight">Email Support</h3>
-              <a href="mailto:support@adrenaline4schools.co.uk" className="text-xs font-semibold text-[#09653d] hover:text-[#064e2e] transition-colors">
-                support@adrenaline4schools.co.uk
+              <a href="mailto:adrenaline4schools@gmail.com" className="text-xs font-semibold text-[#09653d] hover:text-[#064e2e] transition-colors">
+                adrenaline4schools@gmail.com
               </a>
               <p className="text-xs text-slate-500 mt-1 font-sans">Reply within 1 business day</p>
             </div>
@@ -118,11 +118,14 @@ export default function ContactPage() {
               <div className="w-10 h-10 rounded-xl bg-white text-[#09653d] border border-black/[0.06] flex items-center justify-center mb-3 shadow-2xs">
                 <MessageSquare className="w-5 h-5" />
               </div>
-              <h3 className="font-semibold text-[#1d1d1f] text-sm mb-1 tracking-tight">Pharmacy Enquiries</h3>
-              <a href="mailto:pharmacy@adrenaline4schools.co.uk" className="text-xs font-semibold text-[#09653d] hover:text-[#064e2e] transition-colors">
-                pharmacy@adrenaline4schools.co.uk
+              <h3 className="font-semibold text-[#1d1d1f] text-sm mb-1 tracking-tight">Dispensing Pharmacy</h3>
+              <p className="text-xs font-semibold text-[#1d1d1f]">Coppice Pharmacy</p>
+              <p className="text-[11px] text-slate-600 font-mono">GPhC No. 1029705</p>
+              <p className="text-xs text-slate-500 mt-1 font-sans">54 Coppice Avenue, Sale, M33 4WB</p>
+              <p className="text-xs text-slate-500 font-sans">Tel: 0161 973 3552</p>
+              <a href="mailto:adrenaline4schools@gmail.com" className="inline-block mt-2 text-xs font-semibold text-[#09653d] hover:text-[#064e2e] transition-colors">
+                adrenaline4schools@gmail.com
               </a>
-              <p className="text-xs text-slate-500 mt-1 font-sans">For requisition & dispensing checks</p>
             </div>
           </div>
 

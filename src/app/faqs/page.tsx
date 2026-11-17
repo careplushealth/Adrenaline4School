@@ -30,7 +30,7 @@ export default function FAQsPage() {
           },
           {
             q: 'How much do emergency adrenaline pens cost?',
-            a: 'All pens (both EpiPen® and Jext® in 150mcg and 300mcg strengths) are priced at £60.69 ex VAT per pen. Schools can pay via standard 30-day BACS credit invoice or payment card.',
+            a: 'All pens (both EpiPen® and Jext® in 150mcg and 300mcg strengths) are priced at £99.99 ex VAT per pen (reduced from £120.00). Schools can pay via standard 30-day BACS credit invoice or payment card.',
           },
           {
             q: 'How quickly are emergency pens delivered to our school?',

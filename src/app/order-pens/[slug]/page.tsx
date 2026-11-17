@@ -163,10 +163,10 @@ export default function ProductDetailPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="line-through text-slate-400 text-sm font-normal">
-                      £100.00
+                      £120.00
                     </span>
                     <span className="text-[11px] font-bold text-[#09653d] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                      Save £39.31 per pen
+                      Save £20.01 per pen
                     </span>
                   </div>
                   <div className="flex items-baseline gap-2">

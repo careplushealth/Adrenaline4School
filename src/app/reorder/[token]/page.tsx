@@ -53,7 +53,7 @@ export default function SecureReorderPage() {
       strength: supply.strength,
       target_group: 'Registered school pupils',
       pack_size: supply.pack_size || 'Emergency Auto-Injector (1 x Pen)',
-      price: supply.price || 60.69,
+      price: supply.price || 99.99,
       vat_rate: 0.20,
       is_available: 1,
       requires_headteacher_requisition: 1,

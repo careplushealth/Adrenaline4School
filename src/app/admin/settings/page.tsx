@@ -18,7 +18,7 @@ export default function AdminSettingsPage() {
     rem6m: true,
     rem3m: true,
     rem1m: true,
-    senderEmail: 'orders@adrenaline4schools.co.uk',
+    senderEmail: 'adrenaline4schools@gmail.com',
   });
 
   const handleSave = (e: React.FormEvent) => {

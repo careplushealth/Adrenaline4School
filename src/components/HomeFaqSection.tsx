@@ -18,7 +18,7 @@ const HOME_FAQS: FaqItem[] = [
   {
     question: 'What strength of auto-injector does our school need for pupils?',
     answer:
-      'Dosage is calibrated by pupil weight. Primary school pupils weighing 15–30kg (approx. Reception to Year 6) require 150 micrograms (e.g. EpiPen® Junior or Jext® 150). Secondary school pupils weighing over 30kg (approx. Year 7 upwards) require 300 micrograms (e.g. EpiPen® 300 or Jext® 300). Both strengths are priced at £60.69 ex VAT per pen.',
+      'Dosage is calibrated by pupil weight. Primary school pupils weighing 15–30kg (approx. Reception to Year 6) require 150 micrograms (e.g. EpiPen® Junior or Jext® 150). Secondary school pupils weighing over 30kg (approx. Year 7 upwards) require 300 micrograms (e.g. EpiPen® 300 or Jext® 300). Both strengths are priced at £99.99 ex VAT per pen (reduced from £120.00).',
   },
   {
     question: 'How quickly are emergency adrenaline pens delivered to our school?',

@@ -122,7 +122,7 @@ export default function AdminSidebar() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-white truncate">Super Admin</p>
-                <p className="text-[10px] text-slate-400 truncate">admin@adrenaline4schools.co.uk</p>
+                <p className="text-[10px] text-slate-400 truncate">adrenaline4schools@gmail.com</p>
               </div>
             </div>
             <button

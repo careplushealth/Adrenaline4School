@@ -91,7 +91,7 @@ export default function OrderPensPage() {
           <div className="mt-6 flex flex-wrap gap-2.5 text-xs">
             <span className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-300 rounded-full px-4 py-1.5 border border-emerald-500/20 font-medium">
               <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-              £60.69 per pen
+              £99.99 per pen
             </span>
             <span className="inline-flex items-center gap-2 bg-white/[0.06] text-slate-200 rounded-full px-4 py-1.5 border border-white/[0.1] font-medium">
               <Truck className="w-3.5 h-3.5 text-emerald-400" />
@@ -155,9 +155,9 @@ export default function OrderPensPage() {
                   300 micrograms — Secondary Pupils (&gt;30kg)
                 </h3>
                 <div className="flex items-center gap-1.5">
-                  <span className="line-through text-slate-400 text-xs font-normal">£100.00</span>
+                  <span className="line-through text-slate-400 text-xs font-normal">£120.00</span>
                   <span className="text-[12px] font-bold text-[#09653d] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    Now £60.69
+                    Now £99.99
                   </span>
                 </div>
               </div>
@@ -178,9 +178,9 @@ export default function OrderPensPage() {
                   150 micrograms — Primary & Junior Pupils (15–30kg)
                 </h3>
                 <div className="flex items-center gap-1.5">
-                  <span className="line-through text-slate-400 text-xs font-normal">£100.00</span>
+                  <span className="line-through text-slate-400 text-xs font-normal">£120.00</span>
                   <span className="text-[12px] font-bold text-[#09653d] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    Now £60.69
+                    Now £99.99
                   </span>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export default function OrderPensPage() {
           <div className="space-y-1">
             <h3 className="text-xl font-bold tracking-tight">Ready to submit your school order?</h3>
             <p className="text-xs text-slate-300 font-sans">
-              All pens are £60.69 ex VAT. Select 30-day BACS school invoice or instant card payment at checkout. Delivered in 3 to 4 working days.
+              All pens are £99.99 ex VAT. Select 30-day BACS school invoice or instant card payment at checkout. Delivered in 3 to 4 working days.
             </p>
           </div>
 

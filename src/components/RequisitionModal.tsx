@@ -138,8 +138,8 @@ export default function RequisitionModal({
     // Footer
     doc.setFontSize(7.5);
     doc.setTextColor(115, 125, 120);
-    doc.text('Please sign this requisition and upload during checkout or email to: pharmacy@adrenaline4schools.co.uk', 14, 275);
-    doc.text('Adrenaline4Schools | Clinical Supply in Partnership with UK GPhC Registered Dispensing Pharmacies', 14, 280);
+    doc.text('Please sign this requisition and upload during checkout or email to: adrenaline4schools@gmail.com', 14, 275);
+    doc.text('Adrenaline4Schools | In Partnership with Coppice Pharmacy (GPhC #1029705), 54 Coppice Avenue, Sale, M33 4WB', 14, 280);
 
     doc.save(`Headteacher-Requisition-${schoolName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
     setDownloaded(true);

@@ -68,7 +68,7 @@ export default function SparePenCalculator() {
     }
 
     const totalPens = juniorPens + seniorPens;
-    const pricePerPen = 60.69;
+    const pricePerPen = 99.99;
     const totalPrice = totalPens * pricePerPen;
 
     return {
@@ -96,7 +96,7 @@ export default function SparePenCalculator() {
           strength: '150 micrograms',
           target_group: 'Primary school pupils (15kg - 30kg)',
           pack_size: 'Emergency Auto-Injector (1 x Pen)',
-          price: 60.69,
+          price: 99.99,
           vat_rate: 0.2,
           is_available: 1,
           requires_headteacher_requisition: 1,
@@ -121,7 +121,7 @@ export default function SparePenCalculator() {
           strength: '300 micrograms',
           target_group: 'Pupils over 30kg (approx. Year 7+)',
           pack_size: 'Emergency Auto-Injector (1 x Pen)',
-          price: 60.69,
+          price: 99.99,
           vat_rate: 0.2,
           is_available: 1,
           requires_headteacher_requisition: 1,
@@ -341,14 +341,14 @@ export default function SparePenCalculator() {
               <div className="flex justify-between items-baseline">
                 <span className="text-xs text-slate-300 font-sans">Estimated Cost</span>
                 <div className="text-right">
-                  <span className="line-through text-slate-400 text-xs mr-2 font-normal">£{(100 * results.totalPens).toFixed(2)}</span>
+                  <span className="line-through text-slate-400 text-xs mr-2 font-normal">£{(120 * results.totalPens).toFixed(2)}</span>
                   <span className="text-xl font-bold text-emerald-300 font-mono">£{results.totalPrice.toFixed(2)}</span>
                   <span className="text-xs font-normal text-slate-400 ml-1">ex VAT</span>
-                  <p className="text-[11px] text-emerald-400 font-medium">School savings: £{((100 - 60.69) * results.totalPens).toFixed(2)}</p>
+                  <p className="text-[11px] text-emerald-400 font-medium">School savings: £{((120 - 99.99) * results.totalPens).toFixed(2)}</p>
                 </div>
               </div>
               <p className="text-[11px] text-slate-400 font-sans">
-                Subsidised price of £60.69/pen (reduced from £100.00). Includes automated expiry tracking alerts at 12, 6, 3, and 1 month. 30-day BACS invoicing available.
+                Subsidised price of £99.99/pen (reduced from £120.00). Includes automated expiry tracking alerts at 12, 6, 3, and 1 month. 30-day BACS invoicing available.
               </p>
             </div>
 

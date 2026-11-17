@@ -84,10 +84,10 @@ export default function ProductCard({ product }: { product: Product }) {
             <div>
               <div className="flex items-center gap-1.5 mb-1">
                 <span className="line-through text-slate-400 text-xs font-normal">
-                  £100.00
+                  £120.00
                 </span>
                 <span className="text-[10px] font-bold text-[#09653d] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  Save £39.31
+                  Save £20.01
                 </span>
               </div>
               <div className="flex items-baseline gap-1.5">

@@ -234,7 +234,7 @@ export default function HomePage() {
               Choose from the leading adrenaline pens
             </h2>
             <p className="text-slate-600 text-sm">
-              We offer the main brands used in UK schools, with subsidised £60.69 pricing per pen (reduced from £100.00) and simple 30-day BACS invoicing.
+              We offer the main brands used in UK schools, with subsidised £99.99 pricing per pen (reduced from £120.00) and simple 30-day BACS invoicing.
             </p>
           </div>
 

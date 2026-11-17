@@ -26,10 +26,10 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(71, 85, 105);
-  doc.text('Adrenaline4Schools Ltd', 14, 38);
-  doc.text('GPhC Registered Pharmacy Partner Network', 14, 43);
-  doc.text('Company Reg: 14892014 | VAT No: GB 491 0284 12', 14, 48);
-  doc.text('Email: finance@adrenaline4schools.co.uk | Tel: 0161 973 3552', 14, 53);
+  doc.text('Adrenaline4Schools Ltd in partnership with Coppice Pharmacy', 14, 38);
+  doc.text('Coppice Pharmacy (GPhC Reg # 1029705)', 14, 43);
+  doc.text('54 Coppice Avenue, Sale, M33 4WB | Tel: 0161 973 3552', 14, 48);
+  doc.text('Email: adrenaline4schools@gmail.com', 14, 53);
 
   // Invoice Details Box (Right aligned)
   doc.setFillColor(248, 250, 252);
@@ -212,13 +212,13 @@ export function generateInvoicePDF(invoice: Invoice, order?: Order): jsPDF {
   doc.setFontSize(8);
   doc.setTextColor(100, 116, 139);
   doc.setFont('helvetica', 'normal');
-  doc.text('Please email your BACS remittance advice note to: finance@adrenaline4schools.co.uk', 18, bacsY + 39);
+  doc.text('Please email your BACS remittance advice note to: adrenaline4schools@gmail.com', 18, bacsY + 39);
 
   // Footer notes
   doc.setFontSize(7.5);
   doc.setTextColor(100, 116, 139);
   doc.text('Terms: Payment due strictly within 30 days of invoice date. All emergency auto-injectors supplied subject to valid Headteacher Requisition.', 14, 280);
-  doc.text('Adrenaline4Schools Ltd is registered in England & Wales. Dispensing Pharmacy GPhC Reg # 1092812.', 14, 284);
+  doc.text('Dispensing Pharmacy: Coppice Pharmacy, 54 Coppice Avenue, Sale, M33 4WB (GPhC Reg # 1029705).', 14, 284);
 
   return doc;
 }
@@ -472,7 +472,7 @@ export function generateRequisitionPDF(order: Order): jsPDF {
   doc.setTextColor(71, 85, 105);
   doc.text('Verified under Human Medicines (Amendment) Regulations 2017 Schedule 17.', 18, sigY + 80);
   doc.text(`Pharmacy Status: ${order.pharmacy_review_status?.toUpperCase() || 'APPROVED'} | Batch Records Recorded`, 18, sigY + 86);
-  doc.text('Superintendent Pharmacist GPhC Reg # 1092812 | Adrenaline4Schools Clinical Supply', 18, sigY + 92);
+  doc.text('Coppice Pharmacy GPhC Reg # 1029705 | 54 Coppice Avenue, Sale, M33 4WB', 18, sigY + 92);
 
   return doc;
 }

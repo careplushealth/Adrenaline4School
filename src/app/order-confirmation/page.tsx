@@ -121,7 +121,7 @@ function OrderConfirmationContent() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6 font-sans">
-          Questions? Contact us at <a href="mailto:support@adrenaline4schools.co.uk" className="text-[#09653d] underline font-medium">support@adrenaline4schools.co.uk</a> or <a href="tel:01619733552" className="text-[#09653d] underline font-medium">0161 973 3552</a>
+          Questions? Contact us at <a href="mailto:adrenaline4schools@gmail.com" className="text-[#09653d] underline font-medium">adrenaline4schools@gmail.com</a> or <a href="tel:01619733552" className="text-[#09653d] underline font-medium">0161 973 3552</a>
         </p>
       </div>
     </div>

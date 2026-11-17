@@ -142,7 +142,7 @@ export default function TermsPage() {
         {/* Contact info box */}
         <div className="p-6 sm:p-8 rounded-[24px] bg-[#f5f5f7] border border-black/[0.06] text-xs space-y-2">
           <p className="font-bold text-[#1d1d1f] text-sm">Regulatory & Compliance Enquiries</p>
-          <p className="text-neutral-600 leading-relaxed">For questions concerning school orders, requisitions, or BACS invoicing, contact our pharmacy operations desk at <a href="mailto:support@adrenaline4schools.co.uk" className="text-[#09653d] underline font-semibold hover:opacity-80">support@adrenaline4schools.co.uk</a> or call <a href="tel:01619733552" className="text-[#09653d] underline font-semibold hover:opacity-80">0161 973 3552</a>.</p>
+          <p className="text-neutral-600 leading-relaxed">For questions concerning school orders, requisitions, or BACS invoicing, contact our pharmacy operations desk at <a href="mailto:adrenaline4schools@gmail.com" className="text-[#09653d] underline font-semibold hover:opacity-80">adrenaline4schools@gmail.com</a> or call <a href="tel:01619733552" className="text-[#09653d] underline font-semibold hover:opacity-80">0161 973 3552</a>.</p>
         </div>
       </div>
     </div>

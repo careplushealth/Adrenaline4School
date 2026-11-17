@@ -96,7 +96,7 @@ export default function PrivacyPage() {
         <section className="space-y-3 border-t border-black/[0.06] pt-8 pb-4">
           <h2 className="text-xl font-bold text-[#1d1d1f] tracking-tight">5. Your Rights Under UK GDPR</h2>
           <p className="text-neutral-600 leading-relaxed">
-            School staff and administrators have the right to request access to their personal data, request corrections, or object to promotional communications at any time by contacting our Data Protection Officer at <a href="mailto:privacy@adrenaline4schools.co.uk" className="text-[#09653d] underline font-semibold hover:opacity-80">privacy@adrenaline4schools.co.uk</a>.
+            School staff and administrators have the right to request access to their personal data, request corrections, or object to promotional communications at any time by contacting our Data Protection Officer at <a href="mailto:adrenaline4schools@gmail.com" className="text-[#09653d] underline font-semibold hover:opacity-80">adrenaline4schools@gmail.com</a>.
           </p>
         </section>
       </div>

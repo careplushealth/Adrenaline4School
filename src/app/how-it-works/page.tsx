@@ -59,7 +59,7 @@ export default function HowItWorksPage() {
               <h2 className="text-2xl font-bold text-[#1d1d1f] tracking-tight mt-0.5">Select your pens and doses</h2>
             </div>
             <p className="text-xs sm:text-[14px] text-slate-600 leading-relaxed font-sans">
-              Choose the appropriate brands (EpiPen® or Jext®) and doses for your pupils at £60.69 per pen. In the UK, <strong className="font-semibold text-[#1d1d1f]">150 micrograms</strong> is typically recommended for primary pupils weighing 15–30kg, and <strong className="font-semibold text-[#1d1d1f]">300 micrograms</strong> for secondary pupils over 30kg.
+              Choose the appropriate brands (EpiPen® or Jext®) and doses for your pupils at £99.99 per pen (reduced from £120.00). In the UK, <strong className="font-semibold text-[#1d1d1f]">150 micrograms</strong> is typically recommended for primary pupils weighing 15–30kg, and <strong className="font-semibold text-[#1d1d1f]">300 micrograms</strong> for secondary pupils over 30kg.
             </p>
             <div className="pt-1">
               <Link

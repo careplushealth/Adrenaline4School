@@ -71,7 +71,7 @@ export default function Footer() {
             <div className="pt-2 text-[12px] text-slate-400 space-y-2">
               <p className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                <span>UK Operations & Pharmacy Hub, London & Bristol</span>
+                <span>Coppice Pharmacy, 54 Coppice Avenue, Sale, M33 4WB</span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-emerald-400" />
@@ -81,7 +81,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-emerald-400" />
-                <span>support@adrenaline4schools.co.uk</span>
+                <a href="mailto:adrenaline4schools@gmail.com" className="hover:text-white transition-colors">adrenaline4schools@gmail.com</a>
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function Footer() {
             <span>•</span>
             <Link href="/terms" className="hover:text-white transition-colors">BACS Payment Terms</Link>
             <span>•</span>
-            <span className="text-slate-500">GPhC Pharmacy Registration #1092812</span>
+            <span className="text-slate-500">Coppice Pharmacy • GPhC #1029705</span>
           </div>
         </div>
       </div>
