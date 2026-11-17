@@ -499,19 +499,7 @@ export default function SchoolPortalPage() {
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">
-                      DfE URN (6 Digits)
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. 102941"
-                      value={regData.urn}
-                      onChange={(e) => setRegData({ ...regData, urn: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#09653d] bg-stone-50/50 font-mono"
-                    />
-                  </div>
+
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">

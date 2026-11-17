@@ -89,68 +89,70 @@ async function getGmailAccessToken(clientId: string, clientSecret: string, refre
   return data.access_token;
 }
 
-function makeRawEmail({
+async function createRawEmail({
   to,
   from,
   subject,
   html,
+  text,
   attachment,
 }: {
   to: string;
   from: string;
   subject: string;
   html: string;
+  text?: string;
   attachment?: { filename: string; contentBase64: string; contentType?: string };
-}): string {
-  const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+}): Promise<string> {
+  const plainText =
+    text ||
+    html
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&bull;/g, '•')
+      .replace(/&mdash;/g, '—')
+      .replace(/&pound;/g, '£')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const mailOptions: any = {
+    from,
+    to,
+    replyTo: from,
+    subject,
+    text: plainText,
+    html,
+  };
 
   if (attachment) {
-    const boundary = `boundary_${Date.now()}_${Math.random().toString(36).substring(2)}`;
-    const contentType = attachment.contentType || 'application/pdf';
-    const parts = [
-      `From: ${from}`,
-      `To: ${to}`,
-      `Subject: ${utf8Subject}`,
-      'MIME-Version: 1.0',
-      `Content-Type: multipart/mixed; boundary="${boundary}"`,
-      '',
-      `--${boundary}`,
-      'Content-Type: text/html; charset=utf-8',
-      'Content-Transfer-Encoding: base64',
-      '',
-      Buffer.from(html).toString('base64'),
-      '',
-      `--${boundary}`,
-      `Content-Type: ${contentType}; name="${attachment.filename}"`,
-      `Content-Disposition: attachment; filename="${attachment.filename}"`,
-      'Content-Transfer-Encoding: base64',
-      '',
-      attachment.contentBase64,
-      '',
-      `--${boundary}--`,
+    mailOptions.attachments = [
+      {
+        filename: attachment.filename,
+        content: Buffer.from(attachment.contentBase64, 'base64'),
+        contentType: attachment.contentType || 'application/pdf',
+      },
     ];
-    return Buffer.from(parts.join('\r\n'))
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
   }
 
-  const messageParts = [
-    `From: ${from}`,
-    `To: ${to}`,
-    `Subject: ${utf8Subject}`,
-    'MIME-Version: 1.0',
-    'Content-Type: text/html; charset=utf-8',
-    'Content-Transfer-Encoding: base64',
-    '',
-    Buffer.from(html).toString('base64'),
-  ];
-  return Buffer.from(messageParts.join('\r\n'))
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  const transport = nodemailer.createTransport({ streamTransport: true });
+  const info: any = await transport.sendMail(mailOptions);
+
+  return new Promise<string>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    info.message.on('data', (chunk: Buffer) => chunks.push(chunk));
+    info.message.on('end', () => {
+      const rawBuffer = Buffer.concat(chunks);
+      const encoded = rawBuffer
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+      resolve(encoded);
+    });
+    info.message.on('error', reject);
+  });
 }
 
 async function sendViaGmailApi({
@@ -175,7 +177,7 @@ async function sendViaGmailApi({
 
   try {
     const accessToken = await getGmailAccessToken(clientId, clientSecret, refreshToken);
-    const raw = makeRawEmail({
+    const raw = await createRawEmail({
       to,
       from: `Adrenaline4Schools <${senderEmail}>`,
       subject,
@@ -303,7 +305,7 @@ export async function sendVerificationEmail({
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
       <div style="background-color: #09653d; padding: 24px; text-align: left;">
         <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: bold; letter-spacing: -0.5px;">Adrenaline4Schools</h1>
-        <p style="color: #dcfce7; margin: 4px 0 0 0; font-size: 13px;">Official NHS & DfE School Allergy Compliance Portal</p>
+        <p style="color: #dcfce7; margin: 4px 0 0 0; font-size: 13px;">School Emergency Allergy & Medical Stock Portal</p>
       </div>
 
       <div style="padding: 28px 24px;">
@@ -327,12 +329,12 @@ export async function sendVerificationEmail({
 
         <div style="background-color: #f8fafc; border-left: 4px solid #107c41; padding: 12px 16px; border-radius: 4px; font-size: 13px; color: #334155;">
           <strong>Why is this required?</strong><br/>
-          In compliance with UK statutory guidance on medicines in schools and GPhC dispensing standards, all portal users must verify their school institutional domain.
+          In compliance with UK statutory guidance on medicines in schools and GPhC dispensing standards, all portal users must verify their school email domain.
         </div>
       </div>
 
       <div style="background-color: #f1f5f9; padding: 16px 24px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
-        <p style="margin: 0;">Adrenaline4Schools Ltd &bull; GPhC Registered Pharmacy Partner &bull; Official UK DfE School Supplier</p>
+        <p style="margin: 0;">Adrenaline4Schools Ltd &bull; GPhC Registered Pharmacy Partner &bull; School Emergency Medical Supply</p>
       </div>
     </div>
   `;
