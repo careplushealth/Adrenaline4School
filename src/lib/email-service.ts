@@ -165,14 +165,22 @@ async function sendViaGmailApi({
   subject: string;
   html: string;
   attachment?: { filename: string; contentBase64: string; contentType?: string };
-}): Promise<boolean> {
+}): Promise<{ success: boolean; id?: string; error?: string }> {
   const clientId = getEnvVar('GOOGLE_CLIENT_ID');
   const clientSecret = getEnvVar('GOOGLE_CLIENT_SECRET');
   const refreshToken = getEnvVar('GOOGLE_REFRESH_TOKEN');
   const senderEmail = getEnvVar('GMAIL_SENDER_EMAIL') || 'adrenaline4schools@gmail.com';
 
   if (!clientId || !clientSecret || !refreshToken) {
-    return false;
+    const missing = [
+      !clientId && 'GOOGLE_CLIENT_ID',
+      !clientSecret && 'GOOGLE_CLIENT_SECRET',
+      !refreshToken && 'GOOGLE_REFRESH_TOKEN',
+    ].filter(Boolean).join(', ');
+    return {
+      success: false,
+      error: `Missing Google OAuth credentials on host: ${missing}. Please set in deployment environment variables.`,
+    };
   }
 
   try {
@@ -197,13 +205,14 @@ async function sendViaGmailApi({
     const data = await res.json();
     if (data.id) {
       console.log(`[Gmail API Success] Dispatched email ID: ${data.id} to ${to}`);
-      return true;
+      return { success: true, id: data.id };
     }
+    const errText = data.error?.message || JSON.stringify(data);
     console.error('[Gmail API Error Response]', data);
-    return false;
+    return { success: false, error: `Gmail API error: ${errText}` };
   } catch (err: any) {
     console.error('[Gmail API Exception]', err.message);
-    return false;
+    return { success: false, error: `Gmail API Exception: ${err.message}` };
   }
 }
 
@@ -221,15 +230,18 @@ export async function sendEmail({
   const cleanTo = to.trim().toLowerCase();
 
   let providerUsed = 'database_simulated';
-  let deliveryStatus = 'sent';
+  let deliveryStatus = 'pending';
+  let errorDetail: string | null = null;
 
   try {
     // 1. Try Gmail API (Priority 1 if Google OAuth is authorized)
-    const gmailSent = await sendViaGmailApi({ to: cleanTo, subject, html, attachment });
-    if (gmailSent) {
+    const gmailResult = await sendViaGmailApi({ to: cleanTo, subject, html, attachment });
+    if (gmailResult.success) {
       providerUsed = 'gmail_api';
       deliveryStatus = 'sent';
     } else {
+      errorDetail = gmailResult.error || null;
+      console.warn('[Gmail API Notice]', gmailResult.error);
       // 2. Try Resend if configured
       const resend = getResendClient();
       if (resend) {
@@ -272,14 +284,14 @@ export async function sendEmail({
       }
     }
 
-    // 3. Always log to Neon database email_logs
+    // 3. Always log to Neon database email_logs with error_detail
     const stmt = db.prepare(`
       INSERT INTO email_logs (
-        id, recipient_email, subject, template_type, related_entity_type, related_entity_id, status, body_html
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        id, recipient_email, subject, template_type, related_entity_type, related_entity_id, status, error_detail, body_html
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    await stmt.run(id, cleanTo, subject, templateType, relatedEntityType || null, relatedEntityId || null, deliveryStatus, html);
+    await stmt.run(id, cleanTo, subject, templateType, relatedEntityType || null, relatedEntityId || null, deliveryStatus, errorDetail, html);
 
     console.log(`[EMAIL DISPATCHED] To: ${cleanTo} | Subject: ${subject} | Provider: ${providerUsed} | Status: ${deliveryStatus}`);
     return { success: deliveryStatus === 'sent', id, provider: providerUsed };
