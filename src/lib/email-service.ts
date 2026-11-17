@@ -67,7 +67,8 @@ function getEnvVar(name: string): string | null {
       // Ignore
     }
   }
-  return val || null;
+  if (!val) return null;
+  return val.trim().replace(/^["']|["']$/g, '');
 }
 
 // Gmail API OAuth 2.0 Access Token Fetcher

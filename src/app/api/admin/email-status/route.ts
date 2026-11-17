@@ -18,7 +18,8 @@ function getEnvVar(name: string): string | null {
       // Ignore
     }
   }
-  return val || null;
+  if (!val) return null;
+  return val.trim().replace(/^["']|["']$/g, '');
 }
 
 export async function GET() {
